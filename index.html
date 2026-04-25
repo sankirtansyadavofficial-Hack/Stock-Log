@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockLog – Empowering Local Grocery Shops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #fafbfc;
+            --surface: #ffffff;
+            --surface-alt: #f7f8fa;
+            --text: #1a1d23;
+            --text-secondary: #5a5f6e;
+            --text-muted: #8b8f9a;
+            --primary: #0ea95e;
+            --primary-dark: #078a4a;
+            --primary-light: #e6f7ef;
+            --primary-glow: rgba(14, 169, 94, 0.25);
+            --accent: #f59e0b;
+            --accent-light: #fef9e7;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --border: #e8eaef;
+            --border-light: #f1f3f6;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.07), 0 12px 40px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 8px 40px rgba(0, 0, 0, 0.09), 0 20px 60px rgba(0, 0, 0, 0.05);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0 2rem;
+            transition: var(--transition);
+            animation: navSlideDown 0.6s cubic-bezier(0.25, 0.8, 0.25, 1.2) forwards;
+        }
+
+        @keyframes navSlideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .nav.scrolled {
+            box-shadow: var(--shadow-lg);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+            gap: 2rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.55rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            transition: var(--transition);
+        }
+
+        .nav-brand .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 14px var(--primary-glow);
+            transition: var(--transition-smooth);
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 4px 14px var(--primary-glow); }
+            50% { box-shadow: 0 6px 24px rgba(14, 169, 94, 0.4); }
+        }
+
+        .nav-brand:hover .logo-icon {
+            transform: scale(1.08) rotate(-5deg);
+            box-shadow: 0 8px 28px rgba(14, 169, 94, 0.45);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.925rem;
+            padding: 0.55rem 1rem;
+            border-radius: 100px;
+            transition: var(--transition);
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--surface-alt);
+        }
+
+        .nav-links a.active-link {
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.6rem 1.3rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0);
+            border-radius: 100px;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .btn:active::after {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 16px var(--primary-glow);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 24px rgba(14, 169, 94, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #1a1d23;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);
+        }
+        .btn-accent:hover {
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-lg {
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+        }
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Spinner for Button */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .main-content {
+            flex: 1;
+            padding-top: 68px;
+        }
+
+        .section {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            animation: fadeInUp 0.7s cubic-bezier(0.25, 0.8, 0.25, 1.2) forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-hero {
+            padding: 3rem 2rem 4rem;
+            animation-delay: 0.1s;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.45rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 1.5rem;
+            animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes badgePop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: dotBlink 1.5s ease-in-out infinite;
+        }
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.2rem;
+            color: var(--text);
+        }
+        .hero-title span {
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--primary-light);
+            border-radius: 4px;
+            z-index: -1;
+            animation: highlightSlide 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes highlightSlide {
+            from { width: 100%; }
+            to { width: 105%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 480px;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            animation: countUp 2s ease-out forwards;
+        }
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .hero-card-stack {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 1/1.1;
+        }
+        .hero-floating-card {
+            position: absolute;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 1.5rem;
+            animation: floatCard 5s ease-in-out infinite;
+            border: 1px solid var(--border-light);
+        }
+        .hero-floating-card:nth-child(1) { top: 5%; left: 5%; width: 75%; animation-delay: 0s; z-index: 3; }
+        .hero-floating-card:nth-child(2) { bottom: 8%; right: 5%; width: 65%; animation-delay: 1.5s; z-index: 2; background: var(--surface-alt); }
+        .hero-floating-card:nth-child(3) { top: 45%; left: 20%; width: 55%; animation-delay: 3s; z-index: 1; background: #fffefb; border: 1px solid #fde68a; }
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-12px); }
+            50% { transform: translateY(-4px); }
+            75% { transform: translateY(-16px); }
+        }
+        .hero-floating-card .card-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+        .hero-floating-card .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+        .hero-floating-card .card-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            border: 1px solid var(--border-light);
+            transition: var(--transition-smooth);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
+            border-color: transparent;
+        }
+        .feature-card .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            transition: var(--transition-smooth);
+        }
+        .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-3deg); }
+        .feature-icon.green { background: var(--primary-light); color: var(--primary); }
+        .feature-icon.amber { background: var(--accent-light); color: var(--accent); }
+        .feature-icon.blue { background: #e8f0fe; color: #3b82f6; }
+        .feature-icon.purple { background: #f3e8ff; color: #8b5cf6; }
+        .feature-card h3 { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; }
+        .feature-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-align: center;
+            margin-bottom: 0.6rem;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        .dashboard-panel {
+            background: var(--surface);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        .dashboard-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: var(--surface-alt);
+        }
+        .dashboard-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        .dashboard-body { padding: 2rem; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+        }
+        .dash-stat {
+            background: var(--surface-alt);
+            border-radius: var(--radius);
+            padding: 1.3rem;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            transition: var(--transition-smooth);
+        }
+        .dash-stat:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+        .dash-stat .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: var(--primary); }
+        .dash-stat .stat-lbl { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        table th {
+            text-align: left; padding: 0.8rem 1rem; font-weight: 600;
+            color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 0.03em; border-bottom: 2px solid var(--border); background: var(--surface-alt);
+        }
+        table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+        table tbody tr { transition: var(--transition); }
+        table tbody tr:hover { background: var(--surface-alt); }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .status-badge.warning { background: #fef9e7; color: #b45309; }
+        .status-badge.success { background: #e6f7ef; color: #0ea95e; }
+        .status-badge.info { background: #e8f0fe; color: #1d4ed8; }
+        .status-badge.danger { background: var(--danger-light); color: var(--danger); }
+
+        /* Tooltip Styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            width: 240px;
+            background-color: var(--text);
+            color: #fff;
+            text-align: left;
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 135%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            font-size: 0.8rem;
+            font-weight: 400;
+            box-shadow: var(--shadow-lg);
+            pointer-events: none;
+            line-height: 1.5;
+        }
+        .tooltip-container .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: var(--text) transparent transparent transparent;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        .tooltip-text strong {
+            color: var(--primary-light);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        /* Smart To-Buy List Accordion */
+        .to-buy-wrapper {
+            margin-top: 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--surface);
+            transition: var(--transition);
+        }
+        .to-buy-header {
+            padding: 0.8rem 1.2rem;
+            background: var(--danger-light);
+            color: #b45309;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .to-buy-header:hover {
+            background: #fef1db;
+        }
+        .to-buy-header .badge-count {
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+        .to-buy-content {
+            display: none;
+            padding: 0;
+            background: var(--surface);
+        }
+        .to-buy-content.open {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .buy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.85rem;
+        }
+        .buy-item:last-child {
+            border-bottom: none;
+        }
+        .buy-item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .buy-item-title {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .buy-item-meta {
+            font-size: 0.75rem;
+            color: var(--danger);
+        }
+        .buy-item-action {
+            background: var(--surface-alt);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; color: var(--text); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.7rem 1rem; border: 2px solid var(--border);
+            border-radius: var(--radius); font-family: 'Inter', sans-serif;
+            font-size: 0.9rem; transition: var(--transition); background: var(--surface);
+            color: var(--text); resize: vertical;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(14, 169, 94, 0.08);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            animation: fadeIn 0.25s ease; backdrop-filter: blur(4px);
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: var(--surface); border-radius: var(--radius-2xl); padding: 2.5rem;
+            max-width: 550px; width: 90%; box-shadow: var(--shadow-xl);
+            animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
+        }
+        @keyframes modalPop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-close {
+            position: absolute; top: 1rem; right: 1.2rem; background: none; border: none;
+            font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: var(--transition);
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close:hover { background: var(--surface-alt); color: var(--text); }
+
+        .ai-pulse {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: linear-gradient(135deg, #e6f7ef, #f0fdf6); border: 1px solid #b7ebd0;
+            padding: 0.5rem 1rem; border-radius: 100px; font-weight: 600; font-size: 0.85rem;
+            color: var(--primary-dark); animation: aiGlow 2s ease-in-out infinite;
+        }
+        @keyframes aiGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(14, 169, 94, 0.3); }
+            50% { box-shadow: 0 0 0 12px rgba(14, 169, 94, 0); }
+        }
+        .ai-pulse .pulse-dot {
+            width: 10px; height: 10px; background: var(--primary); border-radius: 50%;
+            animation: pulseDot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.7); opacity: 0.4; }
+        }
+
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem; background: var(--text); color: #fff;
+            padding: 1rem 1.5rem; border-radius: var(--radius); font-weight: 500;
+            z-index: 3000; animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), toastOut 0.3s ease 2.5s forwards;
+            box-shadow: var(--shadow-xl); font-size: 0.9rem;
+        }
+        @keyframes toastIn { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(60px); opacity: 0; } }
+
+        .support-widget { position: fixed; bottom: 2rem; left: 2rem; z-index: 1500; }
+        .support-btn {
+            width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: #fff;
+            font-size: 1.5rem; border: none; cursor: pointer; box-shadow: var(--shadow-xl);
+            transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center;
+            animation: supportBounce 3s ease-in-out infinite;
+        }
+        @keyframes supportBounce {
+            0%, 100% { transform: translateY(0); }
+            15% { transform: translateY(-10px); }
+            30% { transform: translateY(0); }
+            45% { transform: translateY(-6px); }
+            60% { transform: translateY(0); }
+        }
+        .support-btn:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(14, 169, 94, 0.5); animation: none; }
+        .support-panel {
+            position: absolute; bottom: 70px; left: 0; width: 320px; background: var(--surface);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); border: 1px solid var(--border-light);
+            padding: 1.5rem; display: none; animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .support-panel.open { display: block; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-subtitle { max-width: 100%; margin: 0 auto 2rem; }
+            .hero-stats { justify-content: center; }
+            .hero-title { font-size: 2.3rem; }
+            .nav-links { display: none; }
+            .form-row { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 1.8rem; }
+            .section { padding: 1.5rem 1rem; }
+            .hero-floating-card { display: none; }
+            .hero-card-stack { aspect-ratio: auto; height: 200px; }
+        }
+
+        /* --- NEW STYLES FOR AI ALERTS SECTION --- */
+        .glass-panel {
+            background: rgba(59, 130, 246, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .glass-panel h4 {
+            color: #1e3a8a; /* Darker blue for contrast */
+        }
+
+        .hidden-element {
+            display: none !important;
+        }
+
+        .fade-in-element {
+            display: block !important;
+            animation: fadeInElement 0.5s ease forwards;
+        }
+
+        @keyframes fadeInElement {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- NEW STYLES FOR LOGIN SECTION --- */
+        .glass-login-panel {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(14, 169, 94, 0.08); /* Transparent Green */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(14, 169, 94, 0.3); /* Light green border */
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(14, 169, 94, 0.15);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-dark);
+        }
+        .login-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        /* Enhance form label contrast inside the green glass panel */
+        .glass-login-panel .form-group label {
+            color: #064e3b; 
+        }
+
+        /* --- UPGRADED STYLES FOR PROFILE PANEL --- */
+        .glass-profile-panel {
+            position: absolute;
+            top: 75px;
+            right: 0;
+            width: 380px;
+            background: rgba(240, 253, 244, 0.95); /* Heavily opaque light-green background */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(14, 169, 94, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 12px 40px rgba(14, 169, 94, 0.2);
+            z-index: 3000; /* Increased z-index to sit above all elements */
+            display: none; 
+        }
+        .glass-profile-panel.open {
+            display: block;
+            animation: fadeInElement 0.3s ease forwards;
+        }
+        
+        /* Profile Pic Styles */
+        .profile-pic-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .profile-pic-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(14, 169, 94, 0.4);
+            position: relative;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+        .profile-pic-container:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+        #largeProfilePic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pic-hover-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .profile-pic-container:hover .pic-hover-overlay {
+            opacity: 1;
+        }
+        
+        /* Mini Menu */
+        .pic-mini-menu {
+            position: absolute;
+            top: 130px;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            z-index: 10;
+            overflow: hidden;
+            width: 160px;
+            display: flex;
+            flex-direction: column;
+        }
+        .pic-mini-menu button {
+            padding: 0.8rem 1rem;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .pic-mini-menu button:hover {
+            background: var(--surface-alt);
+            color: var(--primary);
+        }
+
+        /* Profile Details */
+        .profile-info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .profile-field {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-field label {
+            font-size: 0.75rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+        .profile-field span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        /* Glassmorphic Edit Inputs */
+        .edit-input {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(14, 169, 94, 0.4);
+            border-radius: var(--radius-sm);
+            padding: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: var(--transition);
+            width: 100%;
+        }
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(14, 169, 94, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="nav" id="navbar">
+            <div class="nav-inner">
+                <a href="#" class="nav-brand" onclick="showSection('home')">
+                    <div class="logo-icon"><i class="fas fa-store-alt"></i></div>
+                    StockLog
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#" onclick="showSection('home')" class="active-link" data-section="home">Home</a></li>
+                    <li><a href="#" onclick="showSection('features')" data-section="features">Features</a></li>
+                    <li><a href="#" onclick="showSection('dashboard')" data-section="dashboard">Dashboard</a></li>
+                    <li><a href="#" onclick="showSection('browse')" data-section="browse">Browse Shops</a></li>
+                </ul>
+                <div class="nav-cta" style="position: relative;">
+                    <button id="getStartedBtn" class="btn btn-primary btn-sm" onclick="showSection('login')">Get Started</button>
+                    
+                    <button id="profileBtn" class="btn btn-outline hidden-element" onclick="toggleProfilePanel()" style="border-radius: 50%; width: 50px; height: 50px; padding: 0; overflow: hidden; position: relative; border-color: rgba(14, 169, 94, 0.4);">
+                        <i class="fas fa-user" id="profileNavIcon" style="font-size: 1.2rem; color: var(--primary);"></i>
+                        <img id="profileNavImg" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    </button>
+
+                    <div id="profilePanel" class="glass-profile-panel">
+                        <div class="profile-pic-wrapper">
+                            <div class="profile-pic-container" onclick="togglePicMenu()">
+                                <img id="largeProfilePic" src="https://ui-avatars.com/api/?name=Shop+Owner&background=0ea95e&color=fff&size=150" alt="Profile Photo">
+                                <div class="pic-hover-overlay"><i class="fas fa-camera"></i></div>
+                            </div>
+                            <div id="picMenu" class="pic-mini-menu hidden-element">
+                                <button type="button" onclick="viewProfilePhoto()"><i class="fas fa-eye" style="width: 20px;"></i> View Photo</button>
+                                <button type="button" onclick="document.getElementById('bannerUpload').click()"><i class="fas fa-upload" style="width: 20px;"></i> Change Photo</button>
+                            </div>
+                            <input type="file" id="bannerUpload" accept="image/*" onchange="handleBannerUpload(event)" hidden>
+                        </div>
+
+                        <div class="profile-info-container">
+                            <div class="profile-field">
+                                <label>Owner Name</label>
+                                <span id="profileName">Shop Owner</span>
+                                <input type="text" id="editProfileName" class="edit-input hidden-element">
+                            </div>
+                            <div class="profile-field">
+                                <label>Email Address</label>
+                                <span id="profileEmail">email@shop.com</span>
+                                <input type="email" id="editProfileEmail" class="edit-input hidden-element">
+                            </div>
+                            <div class="profile-field">
+                                <label>Shop Area</label>
+                                <span id="profileArea">N/A</span>
+                                <input type="text" id="editProfileArea" class="edit-input hidden-element">
+                            </div>
+                            <div class="profile-field">
+                                <label>Location</label>
+                                <span id="profileLocation">N/A</span>
+                                <input type="text" id="editProfileLocation" class="edit-input hidden-element">
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button id="editProfileBtn" class="btn btn-outline btn-sm" style="width: 100%; margin-bottom: 0.8rem;" onclick="toggleEditProfile()">
+                                <i class="fas fa-edit"></i> <span id="editBtnText">Edit Profile</span>
+                            </button>
+                            <button class="btn btn-outline btn-sm" style="width: 100%; border-color: var(--danger); color: var(--danger);" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Log Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content" id="mainContent">
+            <section class="section section-hero" id="section-home">
+                <div class="hero-grid">
+                    <div>
+                        <div class="hero-badge"><span class="dot"></span> India's First Local Shop Collective</div>
+                        <h1 class="hero-title">Your Neighborhood <span>Grocery</span> Goes Online – Free</h1>
+                        <p class="hero-subtitle">Empowering local shop owners to take their business online without any platform fees. No delivery charges for customers – shop from your locality at offline prices.</p>
+                        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                            <button class="btn btn-primary btn-lg" onclick="showSection('login')">Register Your Shop</button>
+                            <button class="btn btn-outline btn-lg" onclick="showSection('browse')">Browse Local Shops</button>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="hero-stat"><div class="hero-stat-number" id="statShops">0</div><div class="hero-stat-label">Shops Registered</div></div>
+                            <div class="hero-stat"><div class="hero-stat-number" id="statOrders">0</div><div class="hero-stat-label">Orders Served</div></div>
+                            <div class="hero-stat"><div class="hero-stat-number" id="statSavings">₹0</div><div class="hero-stat-label">Customer Savings</div></div>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-card-stack">
+                            <div class="hero-floating-card">
+                                <div class="card-icon">🛒</div>
+                                <div class="card-title">Order from Local Shop</div>
+                                <div class="card-sub">Same offline prices · No delivery fee</div>
+                            </div>
+                            <div class="hero-floating-card">
+                                <div class="card-icon">📦</div>
+                                <div class="card-title">AI Stock Tracking</div>
+                                <div class="card-sub">Weekly restock alerts</div>
+                            </div>
+                            <div class="hero-floating-card">
+                                <div class="card-icon">🤝</div>
+                                <div class="card-title">Direct Payment at Shop</div>
+                                <div class="card-sub">No GST on platform · Save more</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-features">
+                <h2 class="section-title">Why StockLog?</h2>
+                <p class="section-subtitle">Built for local shop owners – zero platform fees, AI-powered inventory, and direct customer reach.</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon green"><i class="fas fa-tag"></i></div>
+                        <h3>Zero Platform Fees</h3>
+                        <p>We charge a tiny amount per order only – no monthly fees, no hidden costs. You keep your earnings.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon amber"><i class="fas fa-truck"></i></div>
+                        <h3>No Delivery Charges</h3>
+                        <p>Shops serve their local area. Customers pick up orders or get them delivered locally – at no extra cost.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon blue"><i class="fas fa-robot"></i></div>
+                        <h3>AI Inventory Alerts</h3>
+                        <p>Our AI bot calculates daily orders and notifies you weekly which items are running low and when to restock.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon purple"><i class="fas fa-license"></i></div>
+                        <h3>Easy License Verification</h3>
+                        <p>Just upload your food & trading licence. We verify quickly and get your shop online within hours.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon green"><i class="fas fa-hand-holding-usd"></i></div>
+                        <h3>Offline Pricing</h3>
+                        <p>Items are listed at the same price as in your physical shop. No price inflation – ever.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon amber"><i class="fas fa-headset"></i></div>
+                        <h3>24/7 Support</h3>
+                        <p>Our support team is available round-the-clock to help with any issues – for both shop owners and customers.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-login">
+                <div class="glass-login-panel">
+                    <div class="login-header">
+                        <h3><i class="fas fa-user-circle"></i> Shop Setup / Login</h3>
+                        <p style="font-size: 0.9rem; color: #064e3b; opacity: 0.8;">Enter your details to manage your store.</p>
+                    </div>
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="form-row">
+                            <div class="form-group"><label>Owner Name</label><input type="text" id="loginName" placeholder="Full Name" required></div>
+                            <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="shop@email.com" required></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" required></div>
+                            <div class="form-group"><label>Shop Area</label><input type="text" id="loginArea" placeholder="e.g. Kankinara" required></div>
+                        </div>
+                        
+                        <div class="form-group" style="display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label>Location Coordinates</label>
+                                <input type="text" id="loginLocation" placeholder="Click button to fetch ->" readonly style="background: rgba(255,255,255,0.5);">
+                            </div>
+                            <button type="button" class="btn btn-outline" onclick="fetchLocation()" style="margin-bottom: 4px; background: white;">
+                                <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Get Shop Location
+                            </button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; margin-top: 1.5rem;">Secure Login</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-register">
+                <h2 class="section-title">Register Your Grocery Shop</h2>
+                <p class="section-subtitle">Get your shop online in minutes. Free registration – only a small per-order charge.</p>
+                <div class="dashboard-panel" style="max-width:700px;margin:0 auto;">
+                    <div class="dashboard-header"><h3><i class="fas fa-store"></i> Shop Registration</h3><span class="ai-pulse"><span class="pulse-dot"></span> Quick Verification</span></div>
+                    <div class="dashboard-body">
+                        <form id="shopRegForm" onsubmit="handleShopRegistration(event)">
+                            <div class="form-row">
+                                <div class="form-group"><label>Shop Name *</label><input type="text" id="regShopName" placeholder="e.g. Sharma General Store" required></div>
+                                <div class="form-group"><label>Owner Full Name *</label><input type="text" id="regOwnerName" placeholder="Full name" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Mobile Number *</label><input type="tel" id="regMobile" placeholder="+91 98765 43210" required></div>
+                                <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="shop@email.com"></div>
+                            </div>
+                            <div class="form-group"><label>Shop Address *</label><textarea id="regAddress" rows="2" placeholder="Full address with pin code" required></textarea></div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Food Licence Number *</label><input type="text" id="regFoodLicence" placeholder="FSSAI Licence No." required></div>
+                                <div class="form-group"><label>Trade Licence Number *</label><input type="text" id="regTradeLicence" placeholder="Trade Licence No." required></div>
+                            </div>
+                            <div class="form-group"><label>Shop Category</label><select id="regCategory"><option>Grocery</option><option>Dairy & Bakery</option><option>Fruits & Vegetables</option><option>General Store</option><option>Organic Store</option></select></div>
+                            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Submit for Verification</button>
+                        </form>
+                        <div id="regSuccess" class="hidden" style="text-align:center;padding:2rem;">
+                            <div style="font-size:3rem;">✅</div>
+                            <h3 style="margin-top:0.5rem;">Registration Submitted!</h3>
+                            <p style="color:var(--text-secondary);">Your shop will be verified within 24 hours. We'll notify you via SMS.</p>
+                            <button class="btn btn-primary" onclick="showSection('dashboard')">Go to Dashboard</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-dashboard">
+                <h2 class="section-title">Shop Dashboard</h2>
+                <p class="section-subtitle">Track orders, manage inventory, and get AI-powered stock alerts.</p>
+                <div class="dashboard-panel">
+                    <div class="dashboard-header">
+                        <h3><i class="fas fa-chart-line"></i> Sharma General Store – Overview</h3>
+                        <span class="ai-pulse"><span class="pulse-dot"></span> AI Active</span>
+                    </div>
+                    <div class="dashboard-body">
+                        <div class="dashboard-grid">
+                            <div class="dash-stat"><div class="stat-val" id="dashTodayOrders">23</div><div class="stat-lbl">Today's Orders</div></div>
+                            <div class="dash-stat"><div class="stat-val" id="dashTotalItems">156</div><div class="stat-lbl">Items Listed</div></div>
+                            <div class="dash-stat"><div class="stat-val" id="dashLowStock">8</div><div class="stat-lbl">Low Stock Alerts</div></div>
+                            <div class="dash-stat"><div class="stat-val" id="dashCollection">₹1,240</div><div class="stat-lbl">Today's Collection</div></div>
+                        </div>
+                        <div style="margin-top:2rem;">
+                            <h4 style="font-weight:700;margin-bottom:1rem;">📋 Today's Orders</h4>
+                            <div style="overflow-x:auto;">
+                                <table>
+                                    <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Amount</th><th>Status</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>#ORD-101</td><td>Rahul Verma</td><td>Atta, Rice, Oil</td><td>₹385</td><td><span class="status-badge success">Collected</span></td></tr>
+                                        <tr><td>#ORD-102</td><td>Priya Singh</td><td>Milk, Bread, Eggs</td><td>₹210</td><td><span class="status-badge info">Ready</span></td></tr>
+                                        <tr><td>#ORD-103</td><td>Amit Kumar</td><td>Dal, Spices, Sugar</td><td>₹520</td><td><span class="status-badge warning">Pending</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel">
+                            <h4 style="font-weight:700;margin-bottom:0.5rem;">🤖 AI Stock Alerts (Weekly)</h4>
+                            
+                            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.6rem;">AI updates every night after order calculation. Restock reminders sent every Sunday.</p>
+
+                            <div class="to-buy-wrapper hidden-element" id="smartToBuyList">
+                                <div class="to-buy-header" onclick="toggleToBuyPanel()">
+                                    <span><i class="fas fa-clipboard-list"></i> Smart To-Buy List <span class="badge-count" id="toBuyCount">0</span></span>
+                                    <i class="fas fa-chevron-down" id="toBuyIcon" style="transition: transform 0.3s;"></i>
+                                </div>
+                                <div class="to-buy-content" id="toBuyContent">
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:2rem;text-align:right;">
+                            <button id="btnRunEod" class="btn btn-outline btn-sm" onclick="runAdvancedEOD()">
+                                <span class="btn-text">Run End-of-Day Calculation</span>
+                            </button>
+                            <button class="btn btn-primary btn-sm" style="margin-left:0.5rem;" onclick="showSection('inventory')">Manage Inventory</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-inventory">
+                <h2 class="section-title">Inventory Management</h2>
+                <p class="section-subtitle">Add, update, or remove items from your shop listing.</p>
+                <div class="dashboard-panel">
+                    <div class="dashboard-header"><h3><i class="fas fa-boxes"></i> Item List</h3><button class="btn btn-primary btn-sm" onclick="openAddItemModal()">+ Add Item</button></div>
+                    <div class="dashboard-body">
+                        <div style="overflow-x:auto;">
+                            <table id="inventoryTable">
+                                <thead><tr><th>Item Name</th><th>Category</th><th>Price (₹)</th><th>Stock Qty</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Fortune Atta (5kg)</td><td>Grains</td><td>₹285</td><td>42</td><td><span class="status-badge success">In Stock</span></td><td><button class="btn btn-outline btn-sm" onclick="removeItem(this)">Remove</button></td></tr>
+                                    <tr><td>Tata Salt (1kg)</td><td>Spices</td><td>₹25</td><td>120</td><td><span class="status-badge success">In Stock</span></td><td><button class="btn btn-outline btn-sm" onclick="removeItem(this)">Remove</button></td></tr>
+                                    <tr><td>Amul Butter (500g)</td><td>Dairy</td><td>₹260</td><td>8</td><td><span class="status-badge warning">Low Stock</span></td><td><button class="btn btn-outline btn-sm" onclick="removeItem(this)">Remove</button></td></tr>
+                                    <tr><td>Basmati Rice (5kg)</td><td>Grains</td><td>₹420</td><td>15</td><td><span class="status-badge warning">Low Stock</span></td><td><button class="btn btn-outline btn-sm" onclick="removeItem(this)">Remove</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section hidden" id="section-browse">
+                <h2 class="section-title">Browse Local Shops Near You</h2>
+                <p class="section-subtitle">Find grocery shops in your locality – order online, pay at the shop.</p>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+                    <div class="form-group" style="flex:1;min-width:200px;"><input type="text" id="browseSearch" placeholder="Search items or shops..." oninput="filterBrowse()"></div>
+                    <div class="form-group" style="min-width:160px;"><select id="browseCategory" onchange="filterBrowse()"><option value="all">All Categories</option><option>Grocery</option><option>Dairy & Bakery</option><option>Fruits & Vegetables</option><option>General Store</option></select></div>
+                </div>
+                <div class="features-grid" id="browseGrid">
+                    <div class="feature-card" data-category="Grocery">
+                        <div class="feature-icon green"><i class="fas fa-store"></i></div>
+                        <h3>Sharma General Store</h3>
+                        <p>📍 0.4 km away · Grocery</p>
+                        <p style="font-size:0.85rem;color:var(--text-muted);">Atta, Rice, Oil, Spices & more</p>
+                        <button class="btn btn-primary btn-sm" style="margin-top:0.8rem;" onclick="viewShopItems('Sharma General Store')">View Items</button>
+                    </div>
+                    <div class="feature-card" data-category="Dairy & Bakery">
+                        <div class="feature-icon amber"><i class="fas fa-store"></i></div>
+                        <h3>Patel Dairy & Bakery</h3>
+                        <p>📍 0.7 km away · Dairy & Bakery</p>
+                        <p style="font-size:0.85rem;color:var(--text-muted);">Milk, Bread, Butter, Eggs</p>
+                        <button class="btn btn-primary btn-sm" style="margin-top:0.8rem;" onclick="viewShopItems('Patel Dairy & Bakery')">View Items</button>
+                    </div>
+                    <div class="feature-card" data-category="Fruits & Vegetables">
+                        <div class="feature-icon purple"><i class="fas fa-store"></i></div>
+                        <h3>Green Fresh Mart</h3>
+                        <p>📍 1.1 km away · Fruits & Vegetables</p>
+                        <p style="font-size:0.85rem;color:var(--text-muted);">Fresh fruits, vegetables daily</p>
+                        <button class="btn btn-primary btn-sm" style="margin-top:0.8rem;" onclick="viewShopItems('Green Fresh Mart')">View Items</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="support-widget">
+            <button class="support-btn" onclick="toggleSupport()" title="24/7 Support"><i class="fas fa-headset"></i></button>
+            <div class="support-panel" id="supportPanel">
+                <h4 style="font-weight:700;margin-bottom:0.8rem;">24/7 Customer Support</h4>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem;">Need help? Our team is always available.</p>
+                <div class="form-group"><input type="text" id="supportMsg" placeholder="Type your message..."></div>
+                <button class="btn btn-primary btn-sm" style="width:100%;" onclick="sendSupportMsg()">Send Message</button>
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Or call: +91 1800-STOCKLOG</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="addItemModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeAddItemModal()">&times;</button>
+            <h3 style="font-weight:700;margin-bottom:1.2rem;">Add New Item</h3>
+            <form onsubmit="addInventoryItem(event)">
+                <div class="form-row">
+                    <div class="form-group"><label>Item Name *</label><input type="text" id="newItemName" placeholder="e.g. Fortune Atta 5kg" required></div>
+                    <div class="form-group"><label>Category</label><select id="newItemCategory"><option>Grains</option><option>Spices</option><option>Dairy</option><option>Oils</option><option>Snacks</option><option>Beverages</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Price (₹) *</label><input type="number" id="newItemPrice" placeholder="Offline price" required></div>
+                    <div class="form-group"><label>Stock Quantity *</label><input type="number" id="newItemQty" placeholder="Units available" required></div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Add Item</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="shopItemsModal">
+        <div class="modal" style="max-width:650px;">
+            <button class="modal-close" onclick="closeShopItemsModal()">&times;</button>
+            <h3 style="font-weight:700;margin-bottom:0.3rem;" id="shopItemsTitle">Shop Items</h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Same as offline prices · Pay at shop · No delivery fee</p>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead><tr><th>Item</th><th>Price</th><th>Stock</th><th>Order</th></tr></thead>
+                    <tbody id="shopItemsBody">
+                        <tr><td>Fortune Atta (5kg)</td><td>₹285</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Fortune Atta (5kg)')">Order</button></td></tr>
+                        <tr><td>Tata Salt (1kg)</td><td>₹25</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Tata Salt (1kg)')">Order</button></td></tr>
+                        <tr><td>Amul Butter (500g)</td><td>₹260</td><td><span class="status-badge warning">Few Left</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Amul Butter (500g)')">Order</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="photoModal" style="z-index: 3000;">
+        <div class="modal" style="background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0;">
+            <button class="modal-close" style="color: white; background: rgba(0,0,0,0.5); top: -40px; right: 0;" onclick="closePhotoModal()">&times;</button>
+            <img id="modalPhotoView" src="" style="max-width: 100%; max-height: 80vh; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); border: 2px solid white;">
+        </div>
+    </div>
+
+    <script>
+        // --- NEW ADVANCED AI LOGIC SYSTEM ---
+        let advancedInventoryData = [
+            { id: 1, name: "Rice (Basmati)", stock: 45, unit: "kg", avgDailyUsage: 11.2 },
+            { id: 2, name: "Sugar", stock: 8, unit: "kg", avgDailyUsage: 3.1 },
+            { id: 3, name: "Cooking Oil", stock: 6, unit: "L", avgDailyUsage: 1.5 },
+            { id: 4, name: "Atta", stock: 120, unit: "kg", avgDailyUsage: 12.0 },
+            { id: 5, name: "Dal", stock: 55, unit: "kg", avgDailyUsage: 4.5 }
+        ];
+
+        function formatDate(date) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function processInventoryCalculations() {
+            const today = new Date();
+            return advancedInventoryData.map(item => {
+                const daysLeftRaw = item.avgDailyUsage > 0 ? (item.stock / item.avgDailyUsage) : 999;
+                const daysLeft = Math.floor(daysLeftRaw);
+                let depletionDate = new Date(today);
+                depletionDate.setDate(today.getDate() + daysLeft);
+                const recommendedRestock = Math.ceil(item.avgDailyUsage * 14);
+                return { ...item, daysLeft, depletionDate, recommendedRestock };
+            }).sort((a, b) => a.daysLeft - b.daysLeft);
+        }
+
+        function renderToBuyList() {
+            const contentContainer = document.getElementById('toBuyContent');
+            const countBadge = document.getElementById('toBuyCount');
+            contentContainer.innerHTML = '';
+            
+            const processedData = processInventoryCalculations();
+            const criticalItems = processedData.filter(item => item.daysLeft <= 3);
+            
+            countBadge.textContent = criticalItems.length;
+            
+            if (criticalItems.length === 0) {
+                contentContainer.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">All good! No items need immediate restocking right now.</div>`;
+                return;
+            }
+
+            criticalItems.forEach(item => {
+                let urgencyColor = item.daysLeft <= 0 ? 'var(--danger)' : '#b45309';
+                let urgencyText = item.daysLeft <= 0 ? 'Out of stock' : `Runs out in ${item.daysLeft} day${item.daysLeft === 1 ? '' : 's'}`;
+                
+                const itemHTML = `
+                    <div class="buy-item">
+                        <div class="buy-item-details">
+                            <span class="buy-item-title">${item.name}</span>
+                            <span class="buy-item-meta" style="color: ${urgencyColor};"><i class="fas fa-exclamation-circle"></i> ${urgencyText} (Est. ${formatDate(item.depletionDate)})</span>
+                        </div>
+                        <div class="buy-item-action">
+                            Buy: ${item.recommendedRestock} ${item.unit}
+                        </div>
+                    </div>
+                `;
+                contentContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        }
+
+        function toggleToBuyPanel() {
+            const content = document.getElementById('toBuyContent');
+            const icon = document.getElementById('toBuyIcon');
+            content.classList.toggle('open');
+            icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        async function runAdvancedEOD() {
+            const btn = document.getElementById('btnRunEod');
+            const btnText = btn.querySelector('.btn-text');
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Calculating...';
+
+            await new Promise(resolve => setTimeout(resolve, 1800));
+
+            advancedInventoryData.forEach(item => {
+                const variance = 0.8 + (Math.random() * 0.4); 
+                const dailyDeduction = item.avgDailyUsage * variance;
+                item.stock = Math.max(0, item.stock - dailyDeduction);
+            });
+
+            renderToBuyList();
+
+            const toBuyList = document.getElementById('smartToBuyList');
+            toBuyList.classList.remove('hidden-element');
+            toBuyList.classList.add('fade-in-element');
+
+            const todayOrders = document.getElementById('dashTodayOrders');
+            todayOrders.textContent = parseInt(todayOrders.textContent) + Math.floor(Math.random() * 5) + 1;
+            
+            const currentCollectionStr = document.getElementById('dashCollection').textContent.replace('₹', '').replace(',', '');
+            const newCollection = parseInt(currentCollectionStr) + Math.floor(Math.random() * 800) + 200;
+            document.getElementById('dashCollection').textContent = '₹' + newCollection.toLocaleString();
+
+            const savingsEl = document.getElementById('statSavings');
+            const currentSavings = parseInt(localStorage.getItem('stocklog_savings') || '143000');
+            const newSavings = currentSavings + Math.floor(Math.random() * 500) + 100;
+            localStorage.setItem('stocklog_savings', newSavings);
+            savingsEl.textContent = '₹' + newSavings.toLocaleString();
+            
+            let ordersTotal = parseInt(localStorage.getItem('stocklog_orders') || '2847') + Math.floor(Math.random() * 8) + 1;
+            localStorage.setItem('stocklog_orders', ordersTotal);
+            document.getElementById('statOrders').textContent = ordersTotal.toLocaleString() + '+';
+
+            btn.disabled = false;
+            btnText.innerHTML = 'Run End-of-Day Calculation';
+            showToast('🤖 AI calculation complete. Smart To-Buy List generated!');
+        }
+
+        // --- LOCATION & LOGIN LOGIC ---
+        function fetchLocation() {
+            const locInput = document.getElementById('loginLocation');
+            
+            if (!navigator.geolocation) {
+                showToast('❌ Geolocation is not supported by your browser.');
+                return;
+            }
+
+            locInput.value = "Fetching location...";
+            showToast('📍 Requesting location permissions...');
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    locInput.value = `${lat}, ${lng}`;
+                    showToast('✅ Location captured successfully!');
+                },
+                (error) => {
+                    locInput.value = "";
+                    let errMsg = "❌ Location access denied or unavailable.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errMsg = "❌ Please allow location permissions in your browser to proceed.";
+                    }
+                    showToast(errMsg);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const locInput = document.getElementById('loginLocation').value;
+            if(!locInput || locInput === "Fetching location...") {
+                showToast('⚠️ Please get your shop location before logging in.');
+                return;
+            }
+
+            const ownerName = document.getElementById('loginName').value;
+            const email = document.getElementById('loginEmail').value;
+            const area = document.getElementById('loginArea').value;
+
+            // Populate Initial Profile Info
+            document.getElementById('profileName').textContent = ownerName;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('profileArea').textContent = area;
+            document.getElementById('profileLocation').textContent = locInput;
+            
+            // Set dynamic initial for placeholder avatar
+            const initAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(ownerName)}&background=0ea95e&color=fff&size=150`;
+            document.getElementById('largeProfilePic').src = initAvatarUrl;
+
+            document.getElementById('getStartedBtn').classList.add('hidden-element');
+            document.getElementById('profileBtn').classList.remove('hidden-element');
+
+            showToast('✅ Login successful! Loading dashboard...');
+            setTimeout(() => {
+                showSection('dashboard');
+                document.getElementById('loginForm').reset();
+            }, 1200);
+        }
+
+        // --- UPGRADED PROFILE LOGIC ---
+        function toggleProfilePanel() {
+            const panel = document.getElementById('profilePanel');
+            panel.classList.toggle('open');
+            // Hide the pic menu if it was left open
+            document.getElementById('picMenu').classList.add('hidden-element');
+        }
+
+        function togglePicMenu() {
+            document.getElementById('picMenu').classList.toggle('hidden-element');
+        }
+
+        function viewProfilePhoto() {
+            const src = document.getElementById('largeProfilePic').src;
+            document.getElementById('modalPhotoView').src = src;
+            document.getElementById('photoModal').classList.remove('hidden');
+            document.getElementById('picMenu').classList.add('hidden-element');
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.add('hidden');
+        }
+
+        function handleBannerUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const src = e.target.result;
+                    // Update Panel Image
+                    document.getElementById('largeProfilePic').src = src;
+                    
+                    // Update Navbar Icon Image
+                    const navImg = document.getElementById('profileNavImg');
+                    navImg.src = src;
+                    navImg.style.display = 'block';
+                    document.getElementById('profileNavIcon').style.display = 'none';
+                    
+                    document.getElementById('picMenu').classList.add('hidden-element');
+                    showToast('📸 Profile photo updated successfully!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleEditProfile() {
+            const isEditing = !document.getElementById('editProfileName').classList.contains('hidden-element');
+
+            const nameSpan = document.getElementById('profileName');
+            const emailSpan = document.getElementById('profileEmail');
+            const areaSpan = document.getElementById('profileArea');
+            const locSpan = document.getElementById('profileLocation');
+
+            const nameInput = document.getElementById('editProfileName');
+            const emailInput = document.getElementById('editProfileEmail');
+            const areaInput = document.getElementById('editProfileArea');
+            const locInput = document.getElementById('editProfileLocation');
+
+            const btn = document.getElementById('editProfileBtn');
+            const btnText = document.getElementById('editBtnText');
+            const btnIcon = btn.querySelector('i');
+
+            if (!isEditing) {
+                // Switch to Edit Mode
+                nameInput.value = nameSpan.textContent;
+                emailInput.value = emailSpan.textContent;
+                areaInput.value = areaSpan.textContent;
+                locInput.value = locSpan.textContent;
+
+                nameSpan.classList.add('hidden-element');
+                emailSpan.classList.add('hidden-element');
+                areaSpan.classList.add('hidden-element');
+                locSpan.classList.add('hidden-element');
+
+                nameInput.classList.remove('hidden-element');
+                emailInput.classList.remove('hidden-element');
+                areaInput.classList.remove('hidden-element');
+                locInput.classList.remove('hidden-element');
+
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btnText.textContent = "Save Changes";
+                btnIcon.className = "fas fa-save";
+            } else {
+                // Save Changes Mode
+                nameSpan.textContent = nameInput.value;
+                emailSpan.textContent = emailInput.value;
+                areaSpan.textContent = areaInput.value;
+                locSpan.textContent = locInput.value;
+
+                nameInput.classList.add('hidden-element');
+                emailInput.classList.add('hidden-element');
+                areaInput.classList.add('hidden-element');
+                locInput.classList.add('hidden-element');
+
+                nameSpan.classList.remove('hidden-element');
+                emailSpan.classList.remove('hidden-element');
+                areaSpan.classList.remove('hidden-element');
+                locSpan.classList.remove('hidden-element');
+
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btnText.textContent = "Edit Profile";
+                btnIcon.className = "fas fa-edit";
+
+                showToast("✅ Profile details updated securely.");
+            }
+        }
+
+        function logout() {
+            document.getElementById('getStartedBtn').classList.remove('hidden-element');
+            document.getElementById('profileBtn').classList.add('hidden-element');
+            document.getElementById('profilePanel').classList.remove('open');
+            showSection('home');
+            showToast('👋 Logged out successfully.');
+        }
+
+        // --- ORIGINAL UTIL FUNCTIONS ---
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById('section-' + sectionName);
+            if (target) {
+                target.classList.remove('hidden');
+                target.style.animation = 'none';
+                target.offsetHeight;
+                target.style.animation = 'fadeInUp 0.7s cubic-bezier(0.25, 0.8, 0.25, 1.2) forwards';
+                target.style.opacity = '0';
+                target.style.animationFillMode = 'forwards';
+            }
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-link'));
+            const navLink = document.querySelector(`.nav-links a[data-section="${sectionName}"]`);
+            if (navLink) navLink.classList.add('active-link');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleShopRegistration(e) {
+            e.preventDefault();
+            const form = document.getElementById('shopRegForm');
+            const success = document.getElementById('regSuccess');
+            form.classList.add('hidden');
+            success.classList.remove('hidden');
+            showToast('✅ Registration submitted! Verification in progress.');
+            let shopCount = parseInt(localStorage.getItem('stocklog_shops') || '0') + 1;
+            localStorage.setItem('stocklog_shops', shopCount);
+            updateHeroStats();
+        }
+
+        function updateHeroStats() {
+            const shops = parseInt(localStorage.getItem('stocklog_shops') || '124');
+            const orders = parseInt(localStorage.getItem('stocklog_orders') || '2847');
+            const savings = parseInt(localStorage.getItem('stocklog_savings') || '143000');
+            document.getElementById('statShops').textContent = shops.toLocaleString() + '+';
+            document.getElementById('statOrders').textContent = orders.toLocaleString() + '+';
+            document.getElementById('statSavings').textContent = '₹' + savings.toLocaleString();
+        }
+
+        function animateCountUp(el, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 30);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) { start = target;
+                    clearInterval(timer); }
+                el.textContent = Math.floor(start).toLocaleString() + '+';
+            }, 30);
+        }
+
+        function openAddItemModal() {
+            document.getElementById('addItemModal').classList.remove('hidden');
+        }
+
+        function closeAddItemModal() {
+            document.getElementById('addItemModal').classList.add('hidden');
+        }
+
+        function addInventoryItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('newItemName').value;
+            const category = document.getElementById('newItemCategory').value;
+            const price = document.getElementById('newItemPrice').value;
+            const qty = document.getElementById('newItemQty').value;
+            const table = document.getElementById('inventoryTable').querySelector('tbody');
+            const row = document.createElement('tr');
+            const stockStatus = parseInt(qty) < 10 ? 'warning' : 'success';
+            const stockText = parseInt(qty) < 10 ? 'Low Stock' : 'In Stock';
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${category}</td>
+                <td>₹${price}</td>
+                <td>${qty}</td>
+                <td><span class="status-badge ${stockStatus}">${stockText}</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="removeItem(this)">Remove</button></td>
+            `;
+            table.appendChild(row);
+            closeAddItemModal();
+            const totalItems = document.getElementById('dashTotalItems');
+            totalItems.textContent = parseInt(totalItems.textContent) + 1;
+            const lowStock = document.getElementById('dashLowStock');
+            if (parseInt(qty) < 10) lowStock.textContent = parseInt(lowStock.textContent) + 1;
+            showToast('✅ Item added to inventory!');
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newItemPrice').value = '';
+            document.getElementById('newItemQty').value = '';
+        }
+
+        function removeItem(btn) {
+            const row = btn.closest('tr');
+            const qtyCell = row.querySelectorAll('td')[3];
+            const qty = parseInt(qtyCell.textContent);
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(30px)';
+            row.style.transition = '0.3s ease';
+            setTimeout(() => {
+                row.remove();
+                const totalItems = document.getElementById('dashTotalItems');
+                totalItems.textContent = Math.max(0, parseInt(totalItems.textContent) - 1);
+                if (qty < 10) {
+                    const lowStock = document.getElementById('dashLowStock');
+                    lowStock.textContent = Math.max(0, parseInt(lowStock.textContent) - 1);
+                }
+                showToast('🗑️ Item removed from inventory.');
+            }, 300);
+        }
+
+        function toggleSupport() {
+            const panel = document.getElementById('supportPanel');
+            panel.classList.toggle('open');
+        }
+
+        function sendSupportMsg() {
+            const msg = document.getElementById('supportMsg').value;
+            if (msg.trim()) {
+                showToast('📩 Message sent! Support team will respond shortly.');
+                document.getElementById('supportMsg').value = '';
+                document.getElementById('supportPanel').classList.remove('open');
+            }
+        }
+
+        function viewShopItems(shopName) {
+            document.getElementById('shopItemsTitle').textContent = '🛒 ' + shopName;
+            document.getElementById('shopItemsModal').classList.remove('hidden');
+        }
+
+        function closeShopItemsModal() {
+            document.getElementById('shopItemsModal').classList.add('hidden');
+        }
+
+        function placeOrder(itemName) {
+            let ordersTotal = parseInt(localStorage.getItem('stocklog_orders') || '2847') + 1;
+            localStorage.setItem('stocklog_orders', ordersTotal);
+            document.getElementById('statOrders').textContent = ordersTotal.toLocaleString() + '+';
+            const todayOrders = document.getElementById('dashTodayOrders');
+            if (todayOrders) todayOrders.textContent = parseInt(todayOrders.textContent) + 1;
+            showToast('✅ Order placed for: ' + itemName + ' – Pay at the shop!');
+            closeShopItemsModal();
+        }
+
+        function filterBrowse() {
+            const search = document.getElementById('browseSearch').value.toLowerCase();
+            const category = document.getElementById('browseCategory').value;
+            const cards = document.querySelectorAll('#browseGrid .feature-card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                const cat = card.getAttribute('data-category');
+                const matchSearch = text.includes(search);
+                const matchCat = category === 'all' || cat === category;
+                card.style.display = (matchSearch && matchCat) ? '' : 'none';
+                if (matchSearch && matchCat) {
+                    card.style.animation = 'fadeInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2) forwards';
+                    card.style.opacity = '1';
+                }
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const supportPanel = document.getElementById('supportPanel');
+            const supportBtn = document.querySelector('.support-btn');
+            if (supportPanel.classList.contains('open') && !supportPanel.contains(e.target) && e.target !== supportBtn && !supportBtn.contains(e.target)) {
+                supportPanel.classList.remove('open');
+            }
+
+            // Close profile panel and pic menu if clicking outside
+            const profilePanel = document.getElementById('profilePanel');
+            const profileBtn = document.getElementById('profileBtn');
+            const picMenu = document.getElementById('picMenu');
+            if (profilePanel && profilePanel.classList.contains('open') && !profilePanel.contains(e.target) && e.target !== profileBtn && !profileBtn.contains(e.target)) {
+                profilePanel.classList.remove('open');
+                if (picMenu) picMenu.classList.add('hidden-element');
+            }
+
+            const addItemModal = document.getElementById('addItemModal');
+            if (!addItemModal.classList.contains('hidden') && e.target === addItemModal) {
+                closeAddItemModal();
+            }
+            const shopItemsModal = document.getElementById('shopItemsModal');
+            if (!shopItemsModal.classList.contains('hidden') && e.target === shopItemsModal) {
+                closeShopItemsModal();
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateHeroStats();
+            
+            const shops = parseInt(localStorage.getItem('stocklog_shops') || '124');
+            const orders = parseInt(localStorage.getItem('stocklog_orders') || '2847');
+            const savings = parseInt(localStorage.getItem('stocklog_savings') || '143000');
+            document.getElementById('statShops').textContent = shops.toLocaleString() + '+';
+            document.getElementById('statOrders').textContent = orders.toLocaleString() + '+';
+            document.getElementById('statSavings').textContent = '₹' + savings.toLocaleString();
+            showSection('home');
+            setTimeout(() => {
+                animateCountUp(document.getElementById('statShops'), shops, 1500);
+            }, 400);
+            
+            // Generate initial hidden list for AI
+            renderToBuyList();
+        });
+    </script>
+</body>
+</html>
