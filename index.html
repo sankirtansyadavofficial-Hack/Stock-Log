@@ -966,7 +966,7 @@
             box-shadow: 0 0 0 3px rgba(14, 169, 94, 0.1);
         }
 
-        /* --- NEW STYLES FOR BROWSE SHOP COMPONENT --- */
+        /* --- STYLES FOR BROWSE SHOP COMPONENT & HOVER BUTTON --- */
         .shop-banner-img {
             width: 100%;
             height: 140px;
@@ -974,8 +974,11 @@
             border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             display: block;
         }
-        .shop-card-content {
+        .feature-card .shop-card-content {
             padding: 1.5rem;
+            padding-bottom: 4rem; /* Give space for absolute button */
+            position: relative;
+            height: 100%;
         }
         .shop-meta-text {
             font-size: 0.85rem;
@@ -990,6 +993,23 @@
             margin-top: 0.2rem;
             min-width: 14px;
         }
+
+        /* The NEW Hover-Triggered Button */
+        .feature-card .more-info-wrapper {
+            position: absolute;
+            bottom: -20px;
+            left: 1.5rem;
+            right: 1.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .feature-card:hover .more-info-wrapper {
+            bottom: 1.5rem;
+            opacity: 1;
+            visibility: visible;
+        }
+
         .filter-dropdown {
             position: absolute;
             top: 100%;
@@ -1010,7 +1030,97 @@
             gap: 0.5rem;
             font-size: 0.9rem;
             color: var(--text);
+            margin-bottom: 0.5rem;
         }
+        .filter-dropdown label:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- NEW STYLES FOR THE ENHANCED SHOP INFO MODAL --- */
+        .modal-large {
+            max-width: 750px !important;
+        }
+        .modal-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+        .modal-tab-btn {
+            background: none;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .modal-tab-btn:hover {
+            color: var(--primary);
+        }
+        .modal-tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        .modal-tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-tab-content.active {
+            display: block;
+        }
+        
+        /* Review Section Elements */
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        .review-list::-webkit-scrollbar { width: 6px; }
+        .review-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        .review-card {
+            background: var(--surface-alt);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+        .review-author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .review-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .review-author { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+        .review-date { font-size: 0.75rem; color: var(--text-muted); }
+        .review-stars { color: var(--accent); font-size: 0.85rem; letter-spacing: 2px; }
+        .review-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -1318,6 +1428,9 @@
                             </button>
                             <div id="filterMenu" class="filter-dropdown hidden-element">
                                 <label>
+                                    <input type="checkbox" id="nearbyFilter" onchange="applyFilters()"> Nearby Shops
+                                </label>
+                                <label>
                                     <input type="checkbox" id="topRatedFilter" onchange="applyFilters()"> Top Rated Shops
                                 </label>
                             </div>
@@ -1369,20 +1482,78 @@
         </div>
     </div>
 
-    <div class="modal-overlay hidden" id="shopItemsModal">
-        <div class="modal" style="max-width:650px;">
-            <button class="modal-close" onclick="closeShopItemsModal()">&times;</button>
-            <h3 style="font-weight:700;margin-bottom:0.3rem;" id="shopItemsTitle">Shop Items</h3>
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Same as offline prices · Pay at shop · No delivery fee</p>
-            <div style="overflow-x:auto;">
-                <table>
-                    <thead><tr><th>Item</th><th>Price</th><th>Stock</th><th>Order</th></tr></thead>
-                    <tbody id="shopItemsBody">
-                        <tr><td>Fortune Atta (5kg)</td><td>₹285</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Fortune Atta (5kg)')">Order</button></td></tr>
-                        <tr><td>Tata Salt (1kg)</td><td>₹25</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Tata Salt (1kg)')">Order</button></td></tr>
-                        <tr><td>Amul Butter (500g)</td><td>₹260</td><td><span class="status-badge warning">Few Left</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Amul Butter (500g)')">Order</button></td></tr>
-                    </tbody>
-                </table>
+    <div class="modal-overlay hidden" id="shopInfoModal">
+        <div class="modal modal-large">
+            <button class="modal-close" onclick="closeShopInfoModal()">&times;</button>
+            <h3 style="font-weight:700;margin-bottom:0.3rem;" id="shopInfoTitle">Shop Details</h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem;">Same as offline prices · Pay at shop · No delivery fee</p>
+            
+            <div class="modal-tabs">
+                <button class="modal-tab-btn active" onclick="switchModalTab('items')" id="btn-tab-items">
+                    <i class="fas fa-box-open"></i> Items Available
+                </button>
+                <button class="modal-tab-btn" onclick="switchModalTab('reviews')" id="btn-tab-reviews">
+                    <i class="fas fa-star"></i> Reviews by People
+                </button>
+            </div>
+
+            <div id="tab-items" class="modal-tab-content active">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Item</th><th>Price</th><th>Stock</th><th>Order</th></tr></thead>
+                        <tbody id="shopItemsBody">
+                            <tr><td>Fortune Atta (5kg)</td><td>₹285</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Fortune Atta (5kg)')">Order</button></td></tr>
+                            <tr><td>Tata Salt (1kg)</td><td>₹25</td><td><span class="status-badge success">Available</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Tata Salt (1kg)')">Order</button></td></tr>
+                            <tr><td>Amul Butter (500g)</td><td>₹260</td><td><span class="status-badge warning">Few Left</span></td><td><button class="btn btn-primary btn-sm" onclick="placeOrder('Amul Butter (500g)')">Order</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-reviews" class="modal-tab-content">
+                <div class="review-list">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-author-info">
+                                <div class="review-avatar">AK</div>
+                                <div>
+                                    <div class="review-author">Amit Kumar</div>
+                                    <div class="review-date">2 days ago</div>
+                                </div>
+                            </div>
+                            <div class="review-stars">★★★★★</div>
+                        </div>
+                        <div class="review-text">Excellent service and very fresh products. The order was ready when I reached the shop, saved me so much time! The owner is extremely polite.</div>
+                    </div>
+                    
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-author-info">
+                                <div class="review-avatar">SR</div>
+                                <div>
+                                    <div class="review-author">Sneha Roy</div>
+                                    <div class="review-date">1 week ago</div>
+                                </div>
+                            </div>
+                            <div class="review-stars">★★★★☆</div>
+                        </div>
+                        <div class="review-text">Great local shop. Prices are exactly the same as walking in, and the platform makes it so easy to check availability beforehand so I don't have to guess.</div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-author-info">
+                                <div class="review-avatar">VS</div>
+                                <div>
+                                    <div class="review-author">Vikram Singh</div>
+                                    <div class="review-date">2 weeks ago</div>
+                                </div>
+                            </div>
+                            <div class="review-stars">★★★★★</div>
+                        </div>
+                        <div class="review-text">Always friendly and well-stocked. Highly recommended for daily groceries. They have almost everything I need for my house.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1395,6 +1566,9 @@
     </div>
 
     <script>
+        // --- GLOBAL USER LOCATION STORAGE ---
+        let globalUserLocation = null;
+
         // --- NEW ADVANCED AI LOGIC SYSTEM ---
         let advancedInventoryData = [
             { id: 1, name: "Rice (Basmati)", stock: 45, unit: "kg", avgDailyUsage: 11.2 },
@@ -1544,6 +1718,15 @@
                 return;
             }
 
+            // Save global user coordinates to be used by the Nearby filter later
+            let coords = locInput.split(',');
+            if (coords.length === 2) {
+                globalUserLocation = {
+                    lat: parseFloat(coords[0].trim()),
+                    lng: parseFloat(coords[1].trim())
+                };
+            }
+
             const ownerName = document.getElementById('loginName').value;
             const email = document.getElementById('loginEmail').value;
             const area = document.getElementById('loginArea').value;
@@ -1678,6 +1861,7 @@
         }
 
         function logout() {
+            globalUserLocation = null; // Clear Location memory 
             document.getElementById('getStartedBtn').classList.remove('hidden-element');
             document.getElementById('profileBtn').classList.add('hidden-element');
             document.getElementById('profilePanel').classList.remove('open');
@@ -1887,7 +2071,6 @@
         let leafletMap;
         let searchTimeout;
         let searchMarker = null; // Red pin for searched location
-        let currentShopMarkers = []; // Blue pins for filtered shops
 
         function renderShops(shopsToRender) {
             const grid = document.getElementById('browseGrid');
@@ -1928,29 +2111,12 @@
                             <span>${shop.phone}</span>
                         </div>
 
-                        <button class="btn btn-primary btn-sm" style="margin-top: 1.2rem; width: 100%;" onclick="viewShopItems('${shop.name}')">View Items</button>
+                        <div class="more-info-wrapper">
+                            <button class="btn btn-primary btn-sm" style="width: 100%; box-shadow: 0 8px 24px rgba(14, 169, 94, 0.4);" onclick="openShopInfoModal('${shop.name}')">More Info</button>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);
-            });
-        }
-
-        // Dynamically update the map markers based on filtered shops
-        function updateMapMarkers(shopsToRender) {
-            if(!leafletMap) return;
-            
-            // Remove old shop markers
-            currentShopMarkers.forEach(m => leafletMap.removeLayer(m));
-            currentShopMarkers = [];
-
-            // Add new blue pins for the filtered list
-            shopsToRender.forEach(shop => {
-                if(shop.lat && shop.lng) {
-                    let m = L.marker([shop.lat, shop.lng])
-                             .addTo(leafletMap)
-                             .bindPopup(`<b>${shop.name}</b><br>${shop.category}<br>⭐ ${shop.rating}`);
-                    currentShopMarkers.push(m);
-                }
             });
         }
 
@@ -2018,17 +2184,46 @@
             }
         }
 
+        // Haversine formula to get exact distance between two lat/lng pairs
+        function getDistanceInKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * (Math.PI/180);
+            const dLon = (lon2 - lon1) * (Math.PI/180);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
         function applyFilters() {
-            // Get values
+            // Get filter values
             let searchTerm = document.getElementById('browseSearch').value.toLowerCase();
             const category = document.getElementById('browseCategory').value;
             const topRatedOnly = document.getElementById('topRatedFilter').checked;
+            const nearbyOnly = document.getElementById('nearbyFilter').checked;
+
+            if (nearbyOnly && !globalUserLocation) {
+                showToast("⚠️ You must be logged in with a location to use the Nearby feature.");
+                document.getElementById('nearbyFilter').checked = false;
+                return;
+            }
 
             let filtered = shopsData.filter(shop => {
                 // Match search term against name or address
                 const matchSearch = shop.name.toLowerCase().includes(searchTerm) || shop.address.toLowerCase().includes(searchTerm);
+                
+                // Match Category
                 const matchCat = category === 'all' || shop.category === category;
-                return matchSearch && matchCat;
+
+                // Match Nearby
+                let matchNearby = true;
+                if (nearbyOnly && globalUserLocation) {
+                    const distance = getDistanceInKm(globalUserLocation.lat, globalUserLocation.lng, shop.lat, shop.lng);
+                    matchNearby = distance <= 5; // Setting 5km radius logic
+                }
+
+                return matchSearch && matchCat && matchNearby;
             });
 
             // Sort by rating if filter is active
@@ -2040,7 +2235,6 @@
             }
 
             renderShops(filtered);
-            updateMapMarkers(filtered); // Ensure map updates with the filtered list!
 
             // Debounce the map panning so we don't spam the free API while typing
             clearTimeout(searchTimeout);
@@ -2049,23 +2243,48 @@
             }, 800);
         }
 
-        // Initialize Free Leaflet Map (Replaces Google Maps)
+        // Initialize Free Leaflet Map 
         function initializeFreeMap() {
             try {
-                // 1. Create a map, center it on Kolkata (Lat: 22.5726, Lng: 88.3639), zoom level 12
-                leafletMap = L.map('my-map-div').setView([22.5726, 88.3639], 12);
+                // Adding explicit interaction options to fix scroll/drag issues
+                leafletMap = L.map('my-map-div', {
+                    dragging: true,
+                    touchZoom: true,
+                    scrollWheelZoom: true,
+                    doubleClickZoom: true,
+                    boxZoom: true,
+                    keyboard: true
+                }).setView([22.5726, 88.3639], 12);
 
-                // 2. Add the free OpenStreetMap tiles
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(leafletMap);
-
-                // 3. Add initial markers for all shops
-                updateMapMarkers(shopsData);
                 
             } catch (e) {
                 console.log("Leaflet map initialization failed.", e);
             }
+        }
+
+        // --- NEW MORE INFO MODAL LOGIC ---
+        function openShopInfoModal(shopName) {
+            document.getElementById('shopInfoTitle').innerHTML = '<i class="fas fa-store"></i> ' + shopName;
+            document.getElementById('shopInfoModal').classList.remove('hidden');
+            switchModalTab('items'); // Always default to items tab on opening
+        }
+
+        function closeShopInfoModal() {
+            document.getElementById('shopInfoModal').classList.add('hidden');
+        }
+
+        function switchModalTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.modal-tab-content').forEach(el => el.classList.remove('active'));
+            // Remove active state from all tab buttons
+            document.querySelectorAll('.modal-tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show requested tab and activate button
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('btn-tab-' + tabName).classList.add('active');
         }
 
 
@@ -2204,13 +2423,9 @@
             }
         }
 
+        // Keep this for backwards compatibility, though it routes to the new layout
         function viewShopItems(shopName) {
-            document.getElementById('shopItemsTitle').textContent = '🛒 ' + shopName;
-            document.getElementById('shopItemsModal').classList.remove('hidden');
-        }
-
-        function closeShopItemsModal() {
-            document.getElementById('shopItemsModal').classList.add('hidden');
+            openShopInfoModal(shopName);
         }
 
         function placeOrder(itemName) {
@@ -2220,7 +2435,7 @@
             const todayOrders = document.getElementById('dashTodayOrders');
             if (todayOrders) todayOrders.textContent = parseInt(todayOrders.textContent) + 1;
             showToast('✅ Order placed for: ' + itemName + ' – Pay at the shop!');
-            closeShopItemsModal();
+            closeShopInfoModal();
         }
 
         document.addEventListener('click', function(e) {
@@ -2249,9 +2464,10 @@
             if (!addItemModal.classList.contains('hidden') && e.target === addItemModal) {
                 closeAddItemModal();
             }
-            const shopItemsModal = document.getElementById('shopItemsModal');
-            if (!shopItemsModal.classList.contains('hidden') && e.target === shopItemsModal) {
-                closeShopItemsModal();
+            // Update to close the new Shop Info Modal on outside click
+            const shopInfoModal = document.getElementById('shopInfoModal');
+            if (shopInfoModal && !shopInfoModal.classList.contains('hidden') && e.target === shopInfoModal) {
+                closeShopInfoModal();
             }
         });
 
