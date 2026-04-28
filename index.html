@@ -49,6 +49,37 @@
             --ease-out: cubic-bezier(0, 0, 0.2, 1);
         }
 
+        /* ++++++++++++++++ PRELOADER STYLES ++++++++++++++++ */
+        body.locked {
+            overflow: hidden !important;
+            height: 100vh !important;
+        }
+
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 99999; /* Higher than entryScreen */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s cubic-bezier(0.8, 0, 0.2, 1), visibility 1.5s; 
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        #intro-overlay.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
         *,
         *::before,
         *::after {
@@ -2926,6 +2957,12 @@
 
 <body>
 
+    <div id="intro-overlay">
+        <video id="intro-video" muted playsinline autoplay preload="auto">
+            <source src="Animation_stocklog.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <div id="entryScreen">
         <div class="entry-left">
             <div class="entry-left-bg"></div>
@@ -3931,7 +3968,6 @@
             document.getElementById('entryScreen').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('mainNav').style.display = 'none';
-            // document.getElementById('stockyToggle').style.display = 'none';
             document.querySelector('.support-btn').style.display = 'none';
         }
 
@@ -3939,7 +3975,6 @@
             document.getElementById('entryScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('mainNav').style.display = '';
-            // document.getElementById('stockyToggle').style.display = '';
             document.querySelector('.support-btn').style.display = '';
         }
 
@@ -4621,8 +4656,45 @@
 
         // ── INIT ──
         document.addEventListener('DOMContentLoaded', () => {
+
+            // ++++++++++++++++ PRELOADER LOGIC ++++++++++++++++
+            const body = document.body;
+            const video = document.getElementById("intro-video");
+            const overlay = document.getElementById("intro-overlay");
+
+            // Lock the scroll immediately
+            body.classList.add("locked");
+
+            // Browser Autoplay Fail-safe (Mobile Safari etc.)
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay blocked by browser, skipping intro.", error);
+                    overlay.style.display = 'none';
+                    body.classList.remove("locked");
+                });
+            }
+
+            // The Core Transition Logic
+            video.addEventListener("ended", () => {
+                // 1. Trigger the CSS fade-out transition
+                overlay.classList.add("fade-out");
+                
+                // 2. Unlock the scroll slightly before the fade finishes
+                setTimeout(() => {
+                    body.classList.remove("locked");
+                    
+                    // Optional memory cleanup
+                    setTimeout(() => {
+                        overlay.remove();
+                    }, 500); 
+                }, 1000); 
+            });
+            // ++++++++++++++++ END PRELOADER LOGIC ++++++++++++++++
+
             updateHeroStats();
             renderInventoryTable();
+            // Leave entry screen hidden initially so it doesn't pop up over the video
             document.getElementById('entryScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('mainNav').style.display = '';
