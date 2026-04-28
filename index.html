@@ -138,6 +138,14 @@
             font-family: 'Inter', sans-serif;
         }
 
+        /* Fix for persistent white line when Google Maps container is empty */
+        .pac-container:empty,
+        .pac-container:not(:has(.pac-item)) {
+            display: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
         .pac-item {
             padding: 0.5rem 1rem;
             font-size: 0.85rem;
@@ -2957,7 +2965,7 @@
 
 <body>
 
-    <div id="intro-overlay">
+   <div id="intro-overlay">
         <video id="intro-video" muted playsinline autoplay preload="auto">
             <source src="./Animation_stocklog.mp4" type="video/mp4">
         </video>
@@ -4081,6 +4089,12 @@
                 document.getElementById('loginPromptModal').classList.remove('hidden');
                 return;
             }
+            
+            // Fix: Hide Google Places Autocomplete dropdown to prevent white line ghosting on other pages
+            document.querySelectorAll('.pac-container').forEach(container => {
+                container.style.display = 'none';
+            });
+
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             const sec = document.getElementById(`section-${name}`);
             if (sec) sec.classList.add('active');
@@ -4571,7 +4585,6 @@
         const STOCKY_SYSTEM = `You are Stocky...`; // Content truncated for brevity
 
         async function askClaude(userMessage) {
-            // Placeholder logic
             return "Stocky AI services are running.";
         }
 
