@@ -2749,6 +2749,58 @@
             font-size: 1rem;
         }
 
+        /* ++++++++++++++++ WALLET & GLASSMORPHISM ++++++++++++++++ */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            border-radius: var(--r-2xl);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(22,163,74,0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .wallet-card {
+            background: linear-gradient(135deg, var(--ink) 0%, #1e293b 100%);
+            color: white;
+            border-radius: var(--r-xl);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(15, 25, 35, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .wallet-card::after {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px; width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .wallet-balance-lbl { font-size: 0.9rem; color: var(--ink-40); text-transform: uppercase; letter-spacing: 1px; font-weight:600; }
+        .wallet-balance-val { font-size: 3.5rem; font-weight: 800; margin: 0.2rem 0 0 0; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; border-color: var(--red) !important; }
+
+        #rechargeModal { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        #rechargeModal .modal { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
+
         /* ++++++++++++++++ RESPONSIVE ++++++++++++++++ */
         @media (max-width: 1024px) {
             .metrics-grid {
@@ -3192,6 +3244,7 @@
                         data-s="dashboard">Dashboard</a></li>
                 <li id="navInvLink" class="hidden"><a href="#" onclick="showSection('inventory')"
                         data-s="inventory">Inventory</a></li>
+                        <li id="navWalletLink" class="hidden"><a href="#" onclick="showSection('wallet')" data-s="wallet"><i class="fas fa-wallet" style="margin-right:0.3rem;"></i>Wallet</a></li>
                 <li id="navOrdersLink" class="hidden"><a href="#" onclick="showSection('orders')" data-s="orders">My
                         Orders</a></li>
             </ul>
@@ -3493,7 +3546,7 @@
                                             <td>Dal, Spices, Sugar</td>
                                             <td>₹520</td>
                                             <td><span class="badge badge-warning">Pending</span></td>
-                                            <td><button class="btn btn-amber btn-xs" onclick="updateOrderStatus(this)">Prepare</button></td>
+                                            <td><button class="btn btn-amber btn-xs" onclick="acceptOrder(this)">Accept Order</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -3609,6 +3662,41 @@
                                         </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-wallet" class="section">
+            <div class="container">
+                <div class="section-body">
+                    <div class="glass-panel">
+                        <h2 class="section-title" style="text-align:left; margin-bottom: 2rem;">Shopkeeper Wallet</h2>
+                        
+                        <div class="wallet-card">
+                            <div>
+                                <div class="wallet-balance-lbl">Available Balance</div>
+                                <div class="wallet-balance-val">₹<span id="walletBalanceTxt">0</span></div>
+                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top:0.4rem;">₹5 automatically deducted per accepted order.</p>
+                            </div>
+                            <button class="btn btn-green btn-lg" onclick="openRechargeModal()">+ Add Funds</button>
+                        </div>
+
+                        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Recent Transactions</h3>
+                        <div class="overflow-x">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="walletTxBody">
+                                    </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -3856,6 +3944,35 @@
         </div>
     </div>
 
+    <div class="modal-overlay hidden" id="rechargeModal">
+        <div class="modal glass-panel" style="max-width: 440px; padding: 2rem;">
+            <div class="modal-header" style="padding: 0 0 1.5rem 0;">
+                <h3><i class="fas fa-wallet" style="color:var(--green);"></i> Recharge Wallet</h3>
+                <button class="modal-close" onclick="closeRechargeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <p style="font-size: 0.85rem; color: var(--ink-70); margin-bottom: 1rem;">
+                    Recharge securely. Funds are used automatically to clear platform fees instantly without delaying your operations.
+                </p>
+                <div class="form-group">
+                    <label>Amount (Min: ₹100 - Max: ₹10,000)</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-indian-rupee-sign icon"></i>
+                        <input type="number" id="rechargeAmt" class="form-control" placeholder="Enter amount" min="100" max="10000" style="padding-left:2.5rem; font-size:1.1rem; font-weight: 600;">
+                    </div>
+                    <p id="rechargeError" style="color: var(--red); font-size: 0.8rem; margin-top: 0.5rem; display: none; font-weight: 600;"></p>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-outline btn-sm" onclick="setRechargeAmt(100)">₹100</button>
+                    <button class="btn btn-outline btn-sm" onclick="setRechargeAmt(500)">₹500</button>
+                    <button class="btn btn-outline btn-sm" onclick="setRechargeAmt(1000)">₹1,000</button>
+                    <button class="btn btn-outline btn-sm" onclick="setRechargeAmt(2000)">₹2,000</button>
+                </div>
+                <button class="btn btn-forest w-full btn-lg" style="margin-top: 1.5rem;" onclick="processRecharge(event)">Proceed to Pay securely</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay hidden" id="loginPromptModal">
         <div class="modal" style="max-width:440px;">
             <div class="modal-header">
@@ -3937,6 +4054,103 @@
         ];
         let customerOrders = [];
 
+        // WALLET AUTOMATION VARIABLES
+        let shopkeeperWallet = 20; // Default test balance
+        let platformAccount = 0;
+        let pendingOrderBtn = null; 
+        let walletTx = [
+            { date: new Date().toLocaleDateString('en-IN'), desc: 'Sign-up Bonus', amt: '+₹20', status: 'Success' }
+        ];
+
+        // ── WALLET LOGIC & AUTOMATION ──
+        function acceptOrder(btn) {
+            if (shopkeeperWallet < 5) {
+                pendingOrderBtn = btn;
+                toast('⚠️ Insufficient balance to accept order. Minimum ₹5 required.');
+                openRechargeModal();
+                return;
+            }
+            shopkeeperWallet -= 5;
+            platformAccount += 5;
+            walletTx.unshift({
+                date: new Date().toLocaleDateString('en-IN'),
+                desc: 'Platform Fee (Order Acpt.)',
+                amt: '-₹5',
+                status: 'Success'
+            });
+            updateWalletUI();
+            toast('✅ Order accepted. Automated ₹5 fee deducted.');
+            const td = btn.parentElement;
+            td.innerHTML = '<span class="badge badge-success">Preparing</span>';
+        }
+
+        function updateWalletUI() {
+            const balEl = document.getElementById('walletBalanceTxt');
+            if (balEl) balEl.textContent = shopkeeperWallet.toLocaleString();
+            const txBody = document.getElementById('walletTxBody');
+            if (txBody) {
+                txBody.innerHTML = walletTx.map(t => `
+                    <tr>
+                        <td>${t.date}</td>
+                        <td>${t.desc}</td>
+                        <td style="color: ${t.amt.startsWith('-') ? 'var(--red)' : 'var(--green)'}; font-weight:700;">${t.amt}</td>
+                        <td><span class="badge badge-success">${t.status}</span></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function openRechargeModal() {
+            document.getElementById('rechargeModal').classList.remove('hidden');
+            document.getElementById('rechargeError').style.display = 'none';
+            document.getElementById('rechargeAmt').value = '';
+        }
+        function closeRechargeModal() {
+            document.getElementById('rechargeModal').classList.add('hidden');
+            pendingOrderBtn = null; 
+        }
+        function setRechargeAmt(val) {
+            document.getElementById('rechargeAmt').value = val;
+            document.getElementById('rechargeError').style.display = 'none';
+        }
+        function processRecharge(event) {
+            const amtInput = document.getElementById('rechargeAmt');
+            const errorLbl = document.getElementById('rechargeError');
+            const val = parseInt(amtInput.value);
+
+            if (isNaN(val) || val < 100 || val > 10000) {
+                errorLbl.textContent = 'Please enter a valid amount between ₹100 and ₹10,000.';
+                errorLbl.style.display = 'block';
+                amtInput.parentElement.classList.add('shake');
+                setTimeout(() => amtInput.parentElement.classList.remove('shake'), 400);
+                return;
+            }
+
+            const btn = event.target;
+            btn.innerHTML = '<span class="spinner"></span> Processing Securely...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                shopkeeperWallet += val;
+                walletTx.unshift({
+                    date: new Date().toLocaleDateString('en-IN'),
+                    desc: 'Wallet Recharge',
+                    amt: '+₹' + val.toLocaleString(),
+                    status: 'Success'
+                });
+                
+                updateWalletUI();
+                btn.innerHTML = 'Proceed to Pay securely';
+                btn.disabled = false;
+                closeRechargeModal();
+                toast(`🎉 Wallet successfully recharged with ₹${val.toLocaleString()}`);
+
+                if (pendingOrderBtn) {
+                    setTimeout(() => acceptOrder(pendingOrderBtn), 600);
+                }
+            }, 1200);
+        }
+
         const shopsData = [
             { id: 1, name: 'Sharma General Store', category: 'Grocery', banner: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=75', email: 'contact@sharmastore.com', phone: '+91 98765 43210', address: '12 Park Street, Kolkata, WB 700016', rating: 4.8, lat: 22.5540, lng: 88.3510 },
             { id: 2, name: 'Park Street Organics', category: 'Organic Store', banner: 'https://images.unsplash.com/photo-1604719312566-8fa29f701664?auto=format&fit=crop&w=600&q=75', email: 'hello@parkorganics.com', phone: '+91 98765 43214', address: '45 Park Street, Kolkata, WB 700016', rating: 4.6, lat: 22.5560, lng: 88.3530 },
@@ -3986,7 +4200,7 @@
             document.querySelector('.support-btn').style.display = '';
         }
 
-        // ── AUTH ──
+       // ── AUTH ──
         function loginCustomer() {
             const email = document.getElementById('cLoginEmail').value.trim();
             const pass = document.getElementById('cLoginPass').value;
@@ -4057,14 +4271,23 @@
             roleEl.className = `profile-panel-role ${u.role}`;
             const bigImg = document.getElementById('profileBigImg');
             bigImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=0d4a2a&color=fff&size=120`;
+            
+            // PARANOID RESET: Universally hide all protected elements before applying the specific role
+            ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+
             if (u.role === 'owner') {
                 document.getElementById('navDashLink').classList.remove('hidden');
                 document.getElementById('navInvLink').classList.remove('hidden');
+                document.getElementById('navWalletLink').classList.remove('hidden');
                 document.getElementById('profileShopRow').classList.remove('hidden');
                 document.getElementById('profilePanelShop').textContent = u.shopName;
                 document.getElementById('dashShopName').textContent = u.shopName;
                 document.getElementById('dashOwnerName').textContent = `Owner: ${u.name} · Verified ✓`;
                 document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                updateWalletUI(); 
             } else {
                 document.getElementById('navOrdersLink').classList.remove('hidden');
             }
@@ -4074,15 +4297,32 @@
             currentUser = null; userLocation = null;
             document.getElementById('navLoginBtn').classList.remove('hidden');
             document.getElementById('userPillWrap').classList.add('hidden');
-            ['navDashLink', 'navInvLink', 'navOrdersLink'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            
+            // Universally hide all role-specific nav links and profile rows
+            ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            
             document.getElementById('profilePanel').classList.remove('open');
+            
+            // Force close any lingering modals
+            ['rechargeModal', 'shopModal', 'addItemModal'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+
+            // FORCE DETACH DOM: Remove 'active' class from all sections (including wallet) to prevent bleeding
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-home').classList.add('active');
+
             geminiHistory = [];
             showEntry(); selectRole('customer');
             toast('👋 Logged out successfully.');
         }
 
         // ── NAVIGATION ──
-        const PROTECTED_SECTIONS = ['browse', 'dashboard', 'inventory', 'orders'];
+        const PROTECTED_SECTIONS = ['browse', 'dashboard', 'inventory', 'orders', 'wallet'];
 
         function showSection(name) {
             if (PROTECTED_SECTIONS.includes(name) && !currentUser) {
@@ -4104,6 +4344,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
             if (name === 'browse') initBrowse();
             if (name === 'inventory') renderInventoryTable();
+            if (name === 'wallet') updateWalletUI();
             if (name === 'orders') renderCustomerOrders();
         }
 
