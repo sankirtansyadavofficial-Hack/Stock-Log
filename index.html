@@ -4258,95 +4258,130 @@
         }
 
         function setUser(u) {
-            currentUser = u;
-            document.getElementById('navLoginBtn').classList.add('hidden');
-            document.getElementById('userPillWrap').classList.remove('hidden');
-            document.getElementById('navUserName').textContent = u.name.split(' ')[0];
-            document.getElementById('navAvatarInitial').textContent = u.name[0].toUpperCase();
-            document.getElementById('profilePanelName').textContent = u.name;
-            document.getElementById('profilePanelEmail').textContent = u.email;
-            document.getElementById('profilePanelArea').textContent = u.area;
-            const roleEl = document.getElementById('profilePanelRole');
-            roleEl.textContent = u.role === 'owner' ? '🏪 Shop Owner' : '🛒 Customer';
-            roleEl.className = `profile-panel-role ${u.role}`;
-            const bigImg = document.getElementById('profileBigImg');
-            bigImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=0d4a2a&color=fff&size=120`;
-            
-            // PARANOID RESET: Universally hide all protected elements before applying the specific role
-            ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.add('hidden');
-            });
+    currentUser = u;
+    
+    // NEW: Save the user session to localStorage securely as a string
+    localStorage.setItem('stocklog_user', JSON.stringify(u));
 
-            if (u.role === 'owner') {
-                document.getElementById('navDashLink').classList.remove('hidden');
-                document.getElementById('navInvLink').classList.remove('hidden');
-                document.getElementById('navWalletLink').classList.remove('hidden');
-                document.getElementById('profileShopRow').classList.remove('hidden');
-                document.getElementById('profilePanelShop').textContent = u.shopName;
-                document.getElementById('dashShopName').textContent = u.shopName;
-                document.getElementById('dashOwnerName').textContent = `Owner: ${u.name} · Verified ✓`;
-                document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                updateWalletUI(); 
-            } else {
-                document.getElementById('navOrdersLink').classList.remove('hidden');
-            }
-        }
+    document.getElementById('navLoginBtn').classList.add('hidden');
+    document.getElementById('userPillWrap').classList.remove('hidden');
+    document.getElementById('navUserName').textContent = u.name.split(' ')[0];
+    document.getElementById('navAvatarInitial').textContent = u.name[0].toUpperCase();
+    document.getElementById('profilePanelName').textContent = u.name;
+    document.getElementById('profilePanelEmail').textContent = u.email;
+    document.getElementById('profilePanelArea').textContent = u.area;
+    
+    const roleEl = document.getElementById('profilePanelRole');
+    roleEl.textContent = u.role === 'owner' ? '🏪 Shop Owner' : '🛒 Customer';
+    roleEl.className = `profile-panel-role ${u.role}`;
+    
+    const bigImg = document.getElementById('profileBigImg');
+    bigImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=0d4a2a&color=fff&size=120`;
+    
+    // PARANOID RESET
+    ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
 
-        function logout() {
-            currentUser = null; userLocation = null;
-            document.getElementById('navLoginBtn').classList.remove('hidden');
-            document.getElementById('userPillWrap').classList.add('hidden');
-            
-            // Universally hide all role-specific nav links and profile rows
-            ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.add('hidden');
-            });
-            
-            document.getElementById('profilePanel').classList.remove('open');
-            
-            // Force close any lingering modals
-            ['rechargeModal', 'shopModal', 'addItemModal'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.add('hidden');
-            });
+    if (u.role === 'owner') {
+        document.getElementById('navDashLink').classList.remove('hidden');
+        document.getElementById('navInvLink').classList.remove('hidden');
+        document.getElementById('navWalletLink').classList.remove('hidden');
+        document.getElementById('profileShopRow').classList.remove('hidden');
+        document.getElementById('profilePanelShop').textContent = u.shopName;
+        document.getElementById('dashShopName').textContent = u.shopName;
+        document.getElementById('dashOwnerName').textContent = `Owner: ${u.name} · Verified ✓`;
+        document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        updateWalletUI(); 
+    } else {
+        document.getElementById('navOrdersLink').classList.remove('hidden');
+    }
+}
 
-            // FORCE DETACH DOM: Remove 'active' class from all sections (including wallet) to prevent bleeding
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById('section-home').classList.add('active');
+function logout() {
+    currentUser = null; 
+    userLocation = null;
+    
+    // Wipe Auth Session
+    localStorage.removeItem('stocklog_user');
+    
+    // NEW: Wipe Route & Scroll Session Memory to prevent bleed-over
+    sessionStorage.removeItem('stocklog_active_section');
+    sessionStorage.removeItem('stocklog_scroll_y');
 
-            geminiHistory = [];
-            showEntry(); selectRole('customer');
-            toast('👋 Logged out successfully.');
-        }
+    document.getElementById('navLoginBtn').classList.remove('hidden');
+    document.getElementById('userPillWrap').classList.add('hidden');
+    
+    ['navDashLink', 'navInvLink', 'navOrdersLink', 'navWalletLink', 'profileShopRow'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+    
+    document.getElementById('profilePanel').classList.remove('open');
+    
+    // Force close any lingering modals
+    ['rechargeModal', 'shopModal', 'addItemModal', 'loginPromptModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+
+    geminiHistory = [];
+    
+    // NEW: Use the router to handle the reset natively rather than manual DOM manipulation
+    showSection('home');
+    
+    showEntry(); 
+    selectRole('customer');
+    toast('👋 Logged out successfully.');
+}
 
         // ── NAVIGATION ──
         const PROTECTED_SECTIONS = ['browse', 'dashboard', 'inventory', 'orders', 'wallet'];
 
-        function showSection(name) {
-            if (PROTECTED_SECTIONS.includes(name) && !currentUser) {
-                document.getElementById('loginPromptModal').classList.remove('hidden');
-                return;
-            }
-            
-            // Fix: Hide Google Places Autocomplete dropdown to prevent white line ghosting on other pages
-            document.querySelectorAll('.pac-container').forEach(container => {
-                container.style.display = 'none';
-            });
+   function showSection(name) {
+    // 1. Unauthenticated Guard
+    if (PROTECTED_SECTIONS.includes(name) && !currentUser) {
+        document.getElementById('loginPromptModal').classList.remove('hidden');
+        return;
+    }
 
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            const sec = document.getElementById(`section-${name}`);
-            if (sec) sec.classList.add('active');
-            document.querySelectorAll('#navLinks a').forEach(a => {
-                a.classList.toggle('active', a.dataset.s === name);
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (name === 'browse') initBrowse();
-            if (name === 'inventory') renderInventoryTable();
-            if (name === 'wallet') updateWalletUI();
-            if (name === 'orders') renderCustomerOrders();
+    // 2. NEW: Role-Based Routing Guards
+    if (currentUser) {
+        const ownerOnlySections = ['dashboard', 'inventory', 'wallet'];
+        const customerOnlySections = ['orders'];
+
+        // If a customer tries to access a shopkeeper page, redirect to browse
+        if (ownerOnlySections.includes(name) && currentUser.role !== 'owner') {
+            name = 'browse'; 
+        } 
+        // If a shopkeeper tries to access a customer page, redirect to dashboard
+        else if (customerOnlySections.includes(name) && currentUser.role !== 'customer') {
+            name = 'dashboard'; 
         }
+    }
+
+    // Save the active route/section to sessionStorage safely
+    sessionStorage.setItem('stocklog_active_section', name);
+
+    // Fix: Hide Google Places Autocomplete dropdown
+    document.querySelectorAll('.pac-container').forEach(container => {
+        container.style.display = 'none';
+    });
+
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById(`section-${name}`);
+    if (sec) sec.classList.add('active');
+    
+    document.querySelectorAll('#navLinks a').forEach(a => {
+        a.classList.toggle('active', a.dataset.s === name);
+    });
+
+    if (name === 'browse') initBrowse();
+    if (name === 'inventory') renderInventoryTable();
+    if (name === 'wallet') updateWalletUI();
+    if (name === 'orders') renderCustomerOrders();
+}
 
         function goHome() { showSection('home'); }
         function toggleProfile() { document.getElementById('profilePanel').classList.toggle('open'); }
@@ -4909,51 +4944,105 @@
         });
 
         // ── INIT ──
-        document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
 
-            // ++++++++++++++++ PRELOADER LOGIC ++++++++++++++++
-            const body = document.body;
-            const video = document.getElementById("intro-video");
-            const overlay = document.getElementById("intro-overlay");
+    // ++++++++++++++++ 1. SESSION-AWARE ANIMATION LOGIC ++++++++++++++++
+    const body = document.body;
+    const video = document.getElementById("intro-video");
+    const overlay = document.getElementById("intro-overlay");
+    const hasSeenIntro = sessionStorage.getItem('stocklog_intro_played');
 
-            // Lock the scroll immediately
-            body.classList.add("locked");
-
-            // Browser Autoplay Fail-safe (Mobile Safari etc.)
-            let playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Autoplay blocked by browser, skipping intro.", error);
-                    overlay.style.display = 'none';
-                    body.classList.remove("locked");
-                });
-            }
-
-            // The Core Transition Logic
-            video.addEventListener("ended", () => {
-                // 1. Trigger the CSS fade-out transition
-                overlay.classList.add("fade-out");
-                
-                // 2. Unlock the scroll slightly before the fade finishes
-                setTimeout(() => {
-                    body.classList.remove("locked");
-                    
-                    // Optional memory cleanup
-                    setTimeout(() => {
-                        overlay.remove();
-                    }, 500); 
-                }, 1000); 
+    if (hasSeenIntro) {
+        // Bypass video immediately if already seen in this session
+        overlay.style.display = 'none';
+        body.classList.remove("locked");
+    } else {
+        // Play video for the first time
+        body.classList.add("locked");
+        let playPromise = video.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Autoplay blocked, skipping intro.", error);
+                overlay.style.display = 'none';
+                body.classList.remove("locked");
             });
-            // ++++++++++++++++ END PRELOADER LOGIC ++++++++++++++++
+        }
 
-            updateHeroStats();
-            renderInventoryTable();
-            // Leave entry screen hidden initially so it doesn't pop up over the video
+        video.addEventListener("ended", () => {
+            overlay.classList.add("fade-out");
+            sessionStorage.setItem('stocklog_intro_played', 'true'); // Set flag
+            
+            setTimeout(() => {
+                body.classList.remove("locked");
+                setTimeout(() => overlay.remove(), 500); 
+            }, 1000); 
+        });
+    }
+
+    // ++++++++++++++++ INITIALIZE BASE DATA ++++++++++++++++
+    updateHeroStats();
+    renderInventoryTable();
+
+    // ++++++++++++++++ 2. SESSION REHYDRATION ++++++++++++++++
+    const savedSession = localStorage.getItem('stocklog_user');
+    // Retrieve the last active section, default to 'home'
+    const targetSection = sessionStorage.getItem('stocklog_active_section') || 'home';
+
+    if (savedSession) {
+        try {
+            const parsedUser = JSON.parse(savedSession);
+            setUser(parsedUser);
+            
             document.getElementById('entryScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('mainNav').style.display = '';
-            showSection('home');
-        });
+
+            // 3. ROUTE PERSISTENCE: Restore the saved section
+            showSection(targetSection);
+            
+        } catch (e) {
+            console.error("Corrupted session data", e);
+            localStorage.removeItem('stocklog_user');
+            initializeDefaultState(targetSection);
+        }
+    } else {
+        initializeDefaultState(targetSection);
+    }
+
+    // ++++++++++++++++ 4. SCROLL POSITION RESTORATION ++++++++++++++++
+    const savedScroll = sessionStorage.getItem('stocklog_scroll_y');
+    if (savedScroll) {
+        // Use a tiny timeout to ensure the DOM and sections have fully painted
+        setTimeout(() => {
+            window.scrollTo({
+                top: parseInt(savedScroll, 10),
+                behavior: 'instant' // 'instant' prevents jumpy scrolling on load
+            });
+        }, 50);
+    }
+});
+
+// Helper function updated to accept the target section
+function initializeDefaultState(targetSection) {
+    document.getElementById('entryScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('mainNav').style.display = '';
+    
+    // Prevent unauthenticated users from restoring into protected routes
+    const protectedRoutes = ['dashboard', 'inventory', 'orders', 'wallet'];
+    if (protectedRoutes.includes(targetSection)) {
+        showSection('home');
+        document.getElementById('loginPromptModal').classList.remove('hidden');
+    } else {
+        showSection(targetSection);
+    }
+}
+
+// NEW: Capture scroll position right before page refresh
+window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem('stocklog_scroll_y', window.scrollY);
+});
     </script>
 </body>
 </html>
