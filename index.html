@@ -2801,217 +2801,192 @@
         #rechargeModal { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         #rechargeModal .modal { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
 
-        /* ++++++++++++++++ RESPONSIVE ++++++++++++++++ */
+
+/* ++++++++++++++++ MOBILE NAVIGATION & DRAWER STYLES ++++++++++++++++ */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            color: var(--ink);
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .glass-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(15, 0, 0, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(239, 68, 68, 0.2);
+            z-index: 1000;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-drawer.open {
+            left: 0;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .crimson-brand-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .drawer-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .drawer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .drawer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .drawer-links a:hover, .drawer-links a.active {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        /* ++++++++++++++++ RESPONSIVE BREAKPOINTS ++++++++++++++++ */
         @media (max-width: 1024px) {
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 768px) {
-            .entry-left {
-                display: none;
-            }
-
-            .entry-right {
+            /* Video Scaling Fix */
+            #intro-video {
+                object-fit: contain !important;
+                background-color: #000;
                 width: 100%;
-                padding: 2rem 1.5rem;
+                height: 100%;
             }
 
-            .entry-right h2 {
-                font-size: 1.6rem;
-            }
+            /* Navbar & Drawer Triggers */
+            .nav-links { display: none !important; }
+            .mobile-menu-btn { display: block; }
+            .nav-inner { padding: 0 1rem; justify-content: space-between; }
+            .nav { padding: 0; }
+            
+            /* Entry Screen Stacking */
+            .entry-left { display: none; }
+            .entry-right { width: 100%; padding: 2rem 1.5rem; }
+            .entry-right h2 { font-size: 1.6rem; }
 
-            .hero-grid {
-                grid-template-columns: 1fr;
-            }
+            /* Omit 24/7 Support UI */
+            .support-btn { display: none !important; }
+            .entry-trust-item:nth-child(4) { display: none !important; }
 
-            .hero-title {
-                font-size: 2.4rem;
-            }
+            /* Grid Layout Stacking */
+            .hero-grid, .browse-grid, .form-row { grid-template-columns: 1fr !important; }
+            .metrics-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+            .features-grid { grid-template-columns: 1fr; gap: 1rem; }
 
-            .hero-subtitle {
-                font-size: 1rem;
-            }
+            /* Hero Adjustments */
+            .hero-title { font-size: 2.4rem !important; }
+            .hero-subtitle { font-size: 1rem; }
+            .hero-visual { display: none; }
+            .hero-stats { gap: 1.5rem; }
+            .hero-stat-val { font-size: 1.6rem; }
+            .hero-cta { flex-direction: column; }
+            .hero-cta .btn { width: 100%; justify-content: center; }
 
-            .hero-visual {
-                display: none;
-            }
+            /* Touch Targets & Containers */
+            .btn { padding: 0.8rem 1.5rem; }
+            .glass-panel { padding: 1.5rem; }
+            .home-search-bar { padding: 0.35rem 0.35rem 0.35rem 1rem; }
 
-            .hero-stats {
-                gap: 1.5rem;
-            }
+            /* Browse & Dashboard Layouts */
+            .browse-hero { border-radius: var(--r-lg); padding: 1.5rem; }
+            .browse-hero h2 { font-size: 1.5rem; }
+            .browse-filter-row { gap: 0.4rem; }
+            .filter-chip { font-size: 0.78rem; padding: 0.3rem 0.7rem; }
+            #browseMap { height: 200px; }
 
-            .hero-stat-val {
-                font-size: 1.6rem;
-            }
+            .dash-header { padding: 1.5rem; border-radius: var(--r-lg); }
+            .dash-header h2 { font-size: 1.4rem; }
+            .section-title { font-size: 1.8rem; }
+            .panel-header, .section-header-row { flex-direction: column; align-items: flex-start; }
 
-            .nav-links {
-                display: none;
-            }
-
-            .nav-inner {
-                padding: 0;
-            }
-
-            .nav {
-                padding: 0 1rem;
-            }
-
-            .metrics-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stocky-panel {
-                width: calc(100vw - 2rem);
-                right: 1rem;
-                bottom: 5.5rem;
-            }
-
-            .stocky-toggle {
-                bottom: 1.5rem;
-                right: 1rem;
-                width: 54px;
-                height: 54px;
-                font-size: 1.2rem;
-            }
-
-            .support-btn {
-                bottom: 1.5rem;
-                left: 1rem;
-                width: 46px;
-                height: 46px;
-                font-size: 1.1rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .browse-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .browse-hero {
-                border-radius: var(--r-lg);
-                padding: 1.5rem;
-            }
-
-            .browse-hero h2 {
-                font-size: 1.5rem;
-            }
-
-            .browse-filter-row {
-                gap: 0.4rem;
-            }
-
-            .filter-chip {
-                font-size: 0.78rem;
-                padding: 0.3rem 0.7rem;
-            }
-
-            .dash-header {
-                padding: 1.5rem;
-                border-radius: var(--r-lg);
-            }
-
-            .dash-header h2 {
-                font-size: 1.4rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .modal {
-                border-radius: var(--r-xl);
-            }
-
-            .modal-overlay {
-                padding: 1rem;
-                align-items: flex-end;
-            }
-
-            .modal {
-                max-height: 95vh;
-            }
-
-            .panel-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .section-header-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            #browseMap {
-                height: 200px;
-            }
-
-            .home-search-bar {
-                padding: 0.35rem 0.35rem 0.35rem 1rem;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-            }
-
-            .hero-cta .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            /* Modals & Popups */
+            .modal { border-radius: var(--r-xl); max-height: 95vh; }
+            .modal-overlay { padding: 1rem; align-items: flex-end; }
+            .stocky-panel { width: calc(100vw - 2rem); right: 1rem; bottom: 5.5rem; }
+            .stocky-toggle { bottom: 1.5rem; right: 1rem; width: 54px; height: 54px; font-size: 1.2rem; }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-eyebrow {
-                font-size: 0.75rem;
-            }
-
-            .profile-panel {
-                width: calc(100vw - 2rem);
-                right: -0.5rem;
-            }
-
-            .user-pill-name {
-                max-width: 80px;
-            }
-
-            .metric-val {
-                font-size: 1.6rem;
-            }
-
-            .data-table {
-                font-size: 0.8rem;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 0.7rem 0.6rem;
-            }
-
-            .stocky-panel {
-                width: calc(100vw - 1rem);
-                right: 0.5rem;
-            }
+            .container { padding: 0 1rem; }
+            .hero-title { font-size: 2rem !important; }
+            .hero-eyebrow { font-size: 0.75rem; }
+            
+            .metrics-grid { grid-template-columns: 1fr; }
+            
+            .profile-panel { width: calc(100vw - 2rem); right: -0.5rem; }
+            .user-pill-name { max-width: 80px; }
+            .metric-val { font-size: 1.6rem; }
+            
+            .data-table { font-size: 0.8rem; }
+            .data-table th, .data-table td { padding: 0.7rem 0.6rem; }
+            
+            .stocky-panel { width: calc(100vw - 1rem); right: 0.5rem; }
         }
+    </style>
     </style>
 </head>
 
@@ -3249,6 +3224,13 @@
                         Orders</a></li>
             </ul>
             <div class="nav-right">
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileDrawer()">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <button id="navLoginBtn" class="btn btn-forest btn-sm" onclick="showEntry()">Get Started</button>
+                <div id="userPillWrap" class="hidden" style="position:relative;">
                 <button id="navLoginBtn" class="btn btn-forest btn-sm" onclick="showEntry()">Get Started</button>
                 <div id="userPillWrap" class="hidden" style="position:relative;">
                     <div class="user-pill" onclick="toggleProfile()">
@@ -3292,6 +3274,24 @@
             </div>
         </div>
     </nav>
+
+    <div class="mobile-drawer glass-drawer" id="mobileDrawer">
+        <div class="drawer-header">
+            <span class="crimson-brand-text">StockLog</span>
+            <button class="drawer-close" onclick="toggleMobileDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="drawer-links" id="drawerLinks">
+            <li><a href="#" onclick="routeFromDrawer('home')" data-s="home">Home</a></li>
+            <li id="drawerBrowseLink"><a href="#" onclick="routeFromDrawer('browse')" data-s="browse">Browse Shops</a></li>
+            <li id="drawerDashLink" class="hidden"><a href="#" onclick="routeFromDrawer('dashboard')" data-s="dashboard">Dashboard</a></li>
+            <li id="drawerInvLink" class="hidden"><a href="#" onclick="routeFromDrawer('inventory')" data-s="inventory">Inventory</a></li>
+            <li id="drawerWalletLink" class="hidden"><a href="#" onclick="routeFromDrawer('wallet')" data-s="wallet">Wallet</a></li>
+            <li id="drawerOrdersLink" class="hidden"><a href="#" onclick="routeFromDrawer('orders')" data-s="orders">My Orders</a></li>
+        </ul>
+    </div>
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMobileDrawer()"></div>
 
     <main class="main" id="mainApp">
 
@@ -4385,6 +4385,23 @@ function logout() {
 
         function goHome() { showSection('home'); }
         function toggleProfile() { document.getElementById('profilePanel').classList.toggle('open'); }
+
+        // PASTE THE MOBILE DRAWER CODE HERE:
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function routeFromDrawer(route) {
+            toggleMobileDrawer();
+            showSection(route);
+        }
+        // END OF MOBILE DRAWER CODE
+
+        // ── HOME SEARCH ──
+        function handleHomeSearch(e) { if (e.key === 'Enter') triggerHomeSearch(); }
 
         // ── HOME SEARCH ──
         function handleHomeSearch(e) { if (e.key === 'Enter') triggerHomeSearch(); }
