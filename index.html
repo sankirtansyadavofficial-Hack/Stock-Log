@@ -4943,24 +4943,66 @@ function logout() {
             document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
         });
 
-        // ── INIT ──
-     document.addEventListener('DOMContentLoaded', () => {
+        // NEW: Capture scroll position right before page refresh
+ // Ensure this remains globally available outside the DOMContentLoaded block
+window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem('stocklog_scroll_y', window.scrollY);
+});
 
-    // ++++++++++++++++ 1. SESSION-AWARE ANIMATION LOGIC ++++++++++++++++
+        // ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const video = document.getElementById("intro-video");
     const overlay = document.getElementById("intro-overlay");
-    const hasSeenIntro = sessionStorage.getItem('stocklog_intro_played');
 
-    if (hasSeenIntro) {
-        // Bypass video immediately if already seen in this session
+    // ++++++++++++++++ 1. STATE RETRIEVAL ++++++++++++++++
+    const savedSession = localStorage.getItem('stocklog_user'); // Auth State
+    const isTabActive = sessionStorage.getItem('stocklog_tab_active'); // Refresh vs Fresh Tab flag
+
+    // Default matrix assumptions
+    let shouldPlayVideo = true;
+    let targetRoute = 'home';
+    let shouldRestoreScroll = false;
+
+    // ++++++++++++++++ 2. THE LOGIC MATRIX ++++++++++++++++
+    if (!savedSession) {
+        // MATRIX 1: UNAUTHENTICATED (Fresh or Refresh)
+        shouldPlayVideo = true;
+        targetRoute = 'home';
+        
+        // Wipe any lingering session memory to enforce a clean state
+        sessionStorage.removeItem('stocklog_active_section');
+        sessionStorage.removeItem('stocklog_scroll_y');
+        sessionStorage.removeItem('stocklog_tab_active');
+    } else {
+        // AUTHENTICATED
+        shouldPlayVideo = false; // Video never plays if logged in
+        
+        if (isTabActive) {
+            // MATRIX 2: AUTHENTICATED + PAGE REFRESH
+            // Tab was already open, so we restore the route and scroll depth
+            targetRoute = sessionStorage.getItem('stocklog_active_section') || 'home';
+            shouldRestoreScroll = true;
+        } else {
+            // MATRIX 3: AUTHENTICATED + FRESH OPEN (New Tab/Window)
+            // User is logged in, but just opened the link. Drop them at Home.
+            targetRoute = 'home';
+            
+            // Mark this tab as active now so future F5s count as refreshes
+            sessionStorage.setItem('stocklog_tab_active', 'true');
+            
+            // Wipe old scroll data so they start cleanly at the top
+            sessionStorage.removeItem('stocklog_scroll_y');
+        }
+    }
+
+    // ++++++++++++++++ 3. EXECUTE ANIMATION ++++++++++++++++
+    if (!shouldPlayVideo) {
         overlay.style.display = 'none';
         body.classList.remove("locked");
     } else {
-        // Play video for the first time
         body.classList.add("locked");
         let playPromise = video.play();
-        
         if (playPromise !== undefined) {
             playPromise.catch(error => {
                 console.log("Autoplay blocked, skipping intro.", error);
@@ -4968,11 +5010,8 @@ function logout() {
                 body.classList.remove("locked");
             });
         }
-
         video.addEventListener("ended", () => {
             overlay.classList.add("fade-out");
-            sessionStorage.setItem('stocklog_intro_played', 'true'); // Set flag
-            
             setTimeout(() => {
                 body.classList.remove("locked");
                 setTimeout(() => overlay.remove(), 500); 
@@ -4980,68 +5019,48 @@ function logout() {
         });
     }
 
-    // ++++++++++++++++ INITIALIZE BASE DATA ++++++++++++++++
+    // ++++++++++++++++ 4. INITIALIZE DATA & REHYDRATE ++++++++++++++++
     updateHeroStats();
     renderInventoryTable();
-
-    // ++++++++++++++++ 2. SESSION REHYDRATION ++++++++++++++++
-    const savedSession = localStorage.getItem('stocklog_user');
-    // Retrieve the last active section, default to 'home'
-    const targetSection = sessionStorage.getItem('stocklog_active_section') || 'home';
 
     if (savedSession) {
         try {
             const parsedUser = JSON.parse(savedSession);
-            setUser(parsedUser);
+            setUser(parsedUser); // Automatically handles Customer vs Owner UI
             
             document.getElementById('entryScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('mainNav').style.display = '';
-
-            // 3. ROUTE PERSISTENCE: Restore the saved section
-            showSection(targetSection);
-            
         } catch (e) {
             console.error("Corrupted session data", e);
             localStorage.removeItem('stocklog_user');
-            initializeDefaultState(targetSection);
+            targetRoute = 'home';
+            shouldRestoreScroll = false;
         }
     } else {
-        initializeDefaultState(targetSection);
+        document.getElementById('entryScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('mainNav').style.display = '';
     }
 
-    // ++++++++++++++++ 4. SCROLL POSITION RESTORATION ++++++++++++++++
-    const savedScroll = sessionStorage.getItem('stocklog_scroll_y');
-    if (savedScroll) {
-        // Use a tiny timeout to ensure the DOM and sections have fully painted
-        setTimeout(() => {
-            window.scrollTo({
-                top: parseInt(savedScroll, 10),
-                behavior: 'instant' // 'instant' prevents jumpy scrolling on load
-            });
-        }, 50);
-    }
-});
+    // Apply the dynamically determined route (Role Guards in showSection handle the rest)
+    showSection(targetRoute);
 
-// Helper function updated to accept the target section
-function initializeDefaultState(targetSection) {
-    document.getElementById('entryScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('mainNav').style.display = '';
-    
-    // Prevent unauthenticated users from restoring into protected routes
-    const protectedRoutes = ['dashboard', 'inventory', 'orders', 'wallet'];
-    if (protectedRoutes.includes(targetSection)) {
-        showSection('home');
-        document.getElementById('loginPromptModal').classList.remove('hidden');
+    // ++++++++++++++++ 5. EXECUTE SCROLL ++++++++++++++++
+    if (shouldRestoreScroll) {
+        const savedScroll = sessionStorage.getItem('stocklog_scroll_y');
+        if (savedScroll) {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: parseInt(savedScroll, 10),
+                    behavior: 'instant' 
+                });
+            }, 150);
+        }
     } else {
-        showSection(targetSection);
+        // Enforce top-of-page rendering for fresh opens and unauthenticated states
+        window.scrollTo(0, 0); 
     }
-}
-
-// NEW: Capture scroll position right before page refresh
-window.addEventListener('beforeunload', () => {
-    sessionStorage.setItem('stocklog_scroll_y', window.scrollY);
 });
     </script>
 </body>
