@@ -2262,336 +2262,299 @@
             line-height: 1.55;
         }
 
-        /* ++++++++++++++++ STOCKY AI CHATBOT (UI REMOVED) ++++++++++++++++ */
-        .stocky-toggle {
-            display: none !important; /* Removed from UI */
+        /* ++++++++++++++++ AI VOICE ASSISTANT ++++++++++++++++ */
+        .voice-fab {
+            display: none; /* Only visible for owner */
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             z-index: 600;
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             border: none;
-            background: var(--forest);
+            background: linear-gradient(135deg, var(--forest) 0%, #16a34a 100%);
             color: #fff;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(13, 74, 42, 0.45), var(--glow-green);
-            font-size: 1.4rem;
+            box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4), 0 0 0 0 rgba(22, 163, 74, 0.4);
+            font-size: 1.6rem;
             transition: all 0.3s var(--ease-spring);
-            display: flex;
             align-items: center;
             justify-content: center;
-            animation: bouncePulse 4s ease-in-out infinite;
+            animation: pulse-glow 3s infinite;
         }
 
-        @keyframes bouncePulse {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            20% {
-                transform: translateY(-12px);
-            }
-
-            35% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-6px);
-            }
-
-            65% {
-                transform: translateY(0);
-            }
+        .voice-fab.show {
+            display: flex;
         }
 
-        .stocky-toggle:hover {
-            transform: scale(1.1);
+        .voice-fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(22, 163, 74, 0.5);
             animation: none;
-            box-shadow: 0 8px 30px rgba(13, 74, 42, 0.55);
         }
 
-        .stocky-notif {
+        .voice-fab.listening {
+            animation: listening-pulse 1.5s infinite;
+            background: linear-gradient(135deg, var(--red) 0%, #dc2626 100%);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(22, 163, 74, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+        }
+
+        @keyframes listening-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .voice-badge {
             position: absolute;
-            top: -3px;
-            right: -3px;
-            width: 18px;
-            height: 18px;
-            background: var(--red);
+            top: -2px;
+            right: -2px;
+            background: var(--amber);
+            color: var(--ink);
             border-radius: 50%;
-            border: 2px solid var(--white);
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
+            font-weight: 700;
             display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--white);
         }
 
-        .stocky-notif.show {
-            display: block;
+        .voice-badge.show {
+            display: flex;
         }
 
-        .stocky-panel {
-            display: none !important; /* Removed from UI */
+        .voice-panel {
             position: fixed;
             bottom: 6rem;
             right: 2rem;
-            z-index: 600;
-            width: 380px;
+            width: 420px;
             background: var(--white);
             border-radius: var(--r-2xl);
             box-shadow: var(--shadow-xl);
             border: 1.5px solid var(--border);
+            z-index: 600;
             display: none;
-            overflow: hidden;
-            animation: stockyPop 0.35s var(--ease-spring);
-        }
-
-        @keyframes stockyPop {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .stocky-panel.open {
-            display: flex;
             flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.4s var(--ease-spring);
         }
 
-        .stocky-head {
-            padding: 1.1rem 1.3rem;
-            background: var(--forest);
+        .voice-panel.open {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .vp-header {
+            background: linear-gradient(135deg, var(--forest) 0%, #1a6b3f 100%);
+            padding: 1.2rem 1.5rem;
             color: #fff;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            justify-content: space-between;
         }
 
-        .stocky-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 10px rgba(22, 163, 74, 0.5);
-            flex-shrink: 0;
-        }
-
-        .stocky-head-info .name {
+        .vp-title {
             font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .stocky-head-info .status {
-            font-size: 0.72rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.6rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .stocky-head-info .status::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: #86efac;
-            border-radius: 50%;
-            display: inline-block;
+        .vp-status {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
-        .stocky-close {
-            margin-left: auto;
+        .vp-status.listening { color: #86efac; }
+        .vp-status.processing { color: #fde68a; }
+
+        .vp-close {
             background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #fff;
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .vp-close:hover { background: rgba(255, 255, 255, 0.25); }
+
+        .vp-lang-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--r-full);
+            padding: 3px;
+        }
+
+        .vp-lang-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--r-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.2s;
+        }
+
+        .vp-lang-btn.active {
+            background: var(--white);
+            color: var(--forest);
+        }
+
+        .vp-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 50px;
+            background: var(--green-ghost);
+            border-bottom: 1px solid var(--ink-10);
+        }
+
+        .vp-bar {
+            width: 4px;
+            height: 4px;
+            background: var(--green);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        .vp-bar.active {
+            animation: soundWave 0.5s ease infinite alternate;
+        }
+
+        .vp-bar:nth-child(2) { animation-delay: 0.1s; }
+        .vp-bar:nth-child(3) { animation-delay: 0.2s; }
+        .vp-bar:nth-child(4) { animation-delay: 0.3s; }
+        .vp-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes soundWave {
+            0% { height: 4px; }
+            100% { height: 28px; }
+        }
+
+        .vp-transcript {
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--ink);
+            min-height: 80px;
+            max-height: 120px;
+            overflow-y: auto;
+            line-height: 1.5;
+            font-weight: 500;
+            text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .stocky-close:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
+        .vp-transcript.empty { color: var(--ink-40); font-style: italic; }
 
-        .stocky-messages {
-            flex: 1;
-            max-height: 320px;
+        .vp-parsed-list {
+            max-height: 200px;
             overflow-y: auto;
-            padding: 1rem;
+            background: var(--cream);
+            border-top: 1px solid var(--border);
+            padding: 0.5rem;
+        }
+
+        .vp-item {
+            background: var(--white);
+            border-radius: var(--r-md);
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
             display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            scroll-behavior: smooth;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--ink-10);
+            animation: slideInRight 0.3s var(--ease);
         }
 
-        .stocky-messages::-webkit-scrollbar {
-            width: 4px;
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .stocky-messages::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: var(--r-full);
+        .vp-item:last-child { margin-bottom: 0; }
+
+        .vp-item-name { font-weight: 700; font-size: 0.95rem; }
+        .vp-item-qty { 
+            background: var(--green-pale); 
+            color: var(--forest); 
+            padding: 0.2rem 0.6rem; 
+            border-radius: var(--r-sm); 
+            font-size: 0.85rem; 
+            font-weight: 600; 
         }
 
-        .msg {
-            max-width: 88%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .msg.user {
-            align-self: flex-end;
-            align-items: flex-end;
-        }
-
-        .msg.bot {
-            align-self: flex-start;
-            align-items: flex-start;
-        }
-
-        .msg-bubble {
-            padding: 0.7rem 1rem;
-            border-radius: var(--r-lg);
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .msg.user .msg-bubble {
-            background: var(--forest);
-            color: #fff;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg.bot .msg-bubble {
-            background: var(--ink-10);
-            color: var(--ink);
-            border-bottom-left-radius: 4px;
-        }
-
-        .msg-time {
-            font-size: 0.68rem;
+        .vp-item-del {
+            background: transparent;
+            border: none;
             color: var(--ink-40);
+            cursor: pointer;
+            transition: color 0.2s;
         }
+        .vp-item-del:hover { color: var(--red); }
 
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 0.7rem 1rem;
-            background: var(--ink-10);
-            border-radius: var(--r-lg);
-            border-bottom-left-radius: 4px;
-            align-self: flex-start;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--ink-40);
-            border-radius: 50%;
-            animation: typingDot 1.2s ease infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingDot {
-
-            0%,
-            100% {
-                transform: translateY(0);
-                opacity: 0.5;
-            }
-
-            50% {
-                transform: translateY(-4px);
-                opacity: 1;
-            }
-        }
-
-        .stocky-input-row {
-            padding: 0.8rem;
+        .vp-actions {
+            padding: 1rem;
+            background: var(--white);
             border-top: 1px solid var(--border);
             display: flex;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
-        .stocky-input {
-            flex: 1;
-            padding: 0.6rem 0.9rem;
-            border: 1.5px solid var(--border);
-            border-radius: var(--r-full);
-            font-family: 'DM Sans', sans-serif;
+        .vp-bulk-badge {
+            background: var(--amber-light);
+            color: #92400e;
+            padding: 0.4rem 1rem;
+            border-radius: var(--r-md);
             font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .stocky-input:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
-        }
-
-        .stocky-send {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--forest);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-weight: 600;
+            text-align: center;
+            margin: 0.5rem 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .stocky-send:hover {
-            background: var(--green);
-            transform: scale(1.05);
-        }
-
-        .stocky-quick-btns {
-            padding: 0 0.8rem 0.6rem;
-            display: flex;
             gap: 0.4rem;
-            flex-wrap: wrap;
         }
 
-        .quick-btn {
-            background: var(--green-ghost);
-            border: 1px solid var(--green-pale);
-            color: var(--forest);
-            font-size: 0.75rem;
-            padding: 0.3rem 0.7rem;
-            border-radius: var(--r-full);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 500;
-        }
-
-        .quick-btn:hover {
-            background: var(--green-pale);
+        @media (max-width: 768px) {
+            .voice-panel {
+                width: 100vw;
+                height: 85vh;
+                bottom: 0;
+                right: 0;
+                border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+            }
+            .vp-parsed-list { max-height: calc(85vh - 280px); }
         }
 
         /* ++++++++++++++++ SUPPORT ++++++++++++++++ */
@@ -2801,216 +2764,234 @@
         #rechargeModal { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         #rechargeModal .modal { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
 
-        /* ++++++++++++++++ RESPONSIVE ++++++++++++++++ */
-        @media (max-width: 1024px) {
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
 
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+/* ++++++++++++++++ MOBILE NAVIGATION & DRAWER STYLES ++++++++++++++++ */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            color: var(--ink);
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .glass-drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(15, 0, 0, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(239, 68, 68, 0.2);
+            z-index: 1000;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+        }
+
+        .glass-drawer.open {
+            left: 0;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .crimson-brand-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .drawer-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .drawer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .drawer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .drawer-links a:hover, .drawer-links a.active {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+       /* ++++++++++++++++ GLOBAL PROFILE SAFEGUARD ++++++++++++++++ */
+        /* Forces the container to behave properly without overriding JS hidden states */
+        .nav-right { 
+            display: flex !important; 
+            align-items: center !important; 
+        }
+        #userPillWrap {
+            display: block; /* Base state */
+        }
+        #userPillWrap.hidden {
+            display: none !important; /* Respect JS logout state */
+        }
+        .user-pill {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        /* ++++++++++++++++ RESPONSIVE BREAKPOINTS ++++++++++++++++ */
+        @media (max-width: 1024px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
-            .entry-left {
-                display: none;
+            /* 1. Video True Fullscreen Fix */
+            #intro-video {
+                object-fit: cover !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                position: absolute !important;
+                top: 0; left: 0;
             }
 
-            .entry-right {
-                width: 100%;
-                padding: 2rem 1.5rem;
+            /* 2. Navbar & Profile Anti-Squish Armor */
+            .nav-inner { 
+                padding: 0 1rem !important; 
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                width: 100% !important;
+            }
+            .nav-brand { font-size: 1.3rem !important; }
+            .nav-brand-icon { width: 30px !important; height: 30px !important; font-size: 0.9rem !important; }
+            .nav-links { display: none !important; }
+            
+            .nav-right { 
+                gap: 0.6rem !important; 
+                flex-shrink: 0 !important; 
             }
 
-            .entry-right h2 {
-                font-size: 1.6rem;
+            /* Force Layout Order regardless of HTML placement */
+            #userPillWrap { order: 1 !important; }
+            .mobile-menu-btn { 
+                display: block !important; 
+                order: 2 !important; 
+                margin-left: 0.2rem !important; 
             }
 
-            .hero-grid {
-                grid-template-columns: 1fr;
-            }
+            /* Shrink Profile Pill for Mobile */
+            .user-pill { padding: 0.25rem 0.6rem 0.25rem 0.25rem !important; }
+            .user-pill-name { max-width: 65px !important; font-size: 0.8rem !important; }
 
-            .hero-title {
-                font-size: 2.4rem;
-            }
+            /* Entry Screen Alignment */
+            .entry-left { display: none; }
+            .entry-right { width: 100%; padding: 2.5rem 1.5rem; }
+            .entry-right h2 { font-size: 1.8rem; margin-bottom: 0.8rem; }
 
-            .hero-subtitle {
-                font-size: 1rem;
-            }
+            /* Omit 24/7 Support UI */
+            .support-btn { display: none !important; }
+            .entry-trust-item:nth-child(4) { display: none !important; }
 
-            .hero-visual {
-                display: none;
-            }
+            /* 3. Congestion & Spacing Fixes */
+            .section-body { padding: 3.5rem 0 !important; }
+            .hero { padding-top: 3rem; min-height: auto; }
+            
+            /* Grid Decoupling */
+            .hero-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+            .browse-grid, .form-row { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+            .metrics-grid { grid-template-columns: 1fr 1fr; gap: 1rem !important; margin-bottom: 2rem; }
+            .features-grid { grid-template-columns: 1fr; gap: 1.2rem !important; }
 
-            .hero-stats {
-                gap: 1.5rem;
-            }
+            /* Hero Typography Spacing */
+            .hero-title { font-size: 2.2rem !important; margin-bottom: 1rem; line-height: 1.15; }
+            .hero-subtitle { font-size: 1rem; margin-bottom: 2rem; line-height: 1.5; }
+            .hero-visual { display: none; }
+            .hero-stats { gap: 1.5rem; margin-top: 2rem; }
+            .hero-stat-val { font-size: 1.5rem; }
+            .hero-cta { flex-direction: column; gap: 1rem; }
+            .hero-cta .btn { width: 100%; justify-content: center; padding: 0.9rem 1.5rem; }
 
-            .hero-stat-val {
-                font-size: 1.6rem;
-            }
+            /* Touch Targets & Global Containers */
+            .btn { padding: 0.8rem 1.5rem; }
+            .glass-panel { padding: 1.5rem; margin-bottom: 2rem; }
+            .home-search-bar { padding: 0.4rem 0.4rem 0.4rem 1.2rem; margin-bottom: 1.5rem; }
+            .panel { margin-bottom: 2rem; }
 
-            .nav-links {
-                display: none;
-            }
+            /* Browse & Dashboard Layouts */
+            .browse-hero { border-radius: var(--r-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
+            .browse-hero h2 { font-size: 1.5rem; margin-bottom: 0.6rem; }
+            .browse-filter-row { gap: 0.5rem; margin-top: 1rem; }
+            .filter-chip { font-size: 0.8rem; padding: 0.35rem 0.8rem; }
+            #browseMap { height: 240px; margin-bottom: 1.5rem; }
 
-            .nav-inner {
-                padding: 0;
-            }
+            .dash-header { padding: 1.5rem; border-radius: var(--r-lg); margin-bottom: 1.5rem; }
+            .dash-header h2 { font-size: 1.5rem; margin-bottom: 0.4rem; }
+            .section-title { font-size: 1.8rem; margin-bottom: 0.8rem; }
+            .section-sub { margin-bottom: 2rem; font-size: 0.95rem; }
+            .panel-header, .section-header-row { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
 
-            .nav {
-                padding: 0 1rem;
-            }
-
-            .metrics-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stocky-panel {
-                width: calc(100vw - 2rem);
-                right: 1rem;
-                bottom: 5.5rem;
-            }
-
-            .stocky-toggle {
-                bottom: 1.5rem;
-                right: 1rem;
-                width: 54px;
-                height: 54px;
-                font-size: 1.2rem;
-            }
-
-            .support-btn {
-                bottom: 1.5rem;
-                left: 1rem;
-                width: 46px;
-                height: 46px;
-                font-size: 1.1rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .browse-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .browse-hero {
-                border-radius: var(--r-lg);
-                padding: 1.5rem;
-            }
-
-            .browse-hero h2 {
-                font-size: 1.5rem;
-            }
-
-            .browse-filter-row {
-                gap: 0.4rem;
-            }
-
-            .filter-chip {
-                font-size: 0.78rem;
-                padding: 0.3rem 0.7rem;
-            }
-
-            .dash-header {
-                padding: 1.5rem;
-                border-radius: var(--r-lg);
-            }
-
-            .dash-header h2 {
-                font-size: 1.4rem;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-
-            .modal {
-                border-radius: var(--r-xl);
-            }
-
-            .modal-overlay {
-                padding: 1rem;
-                align-items: flex-end;
-            }
-
-            .modal {
-                max-height: 95vh;
-            }
-
-            .panel-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .section-header-row {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            #browseMap {
-                height: 200px;
-            }
-
-            .home-search-bar {
-                padding: 0.35rem 0.35rem 0.35rem 1rem;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-            }
-
-            .hero-cta .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            /* Modals & Popups */
+            .modal { border-radius: var(--r-xl); max-height: 90vh; }
+            .modal-overlay { padding: 1rem; align-items: flex-end; }
+            .stocky-panel { width: calc(100vw - 2rem); right: 1rem; bottom: 5.5rem; }
+            .stocky-toggle { bottom: 1.5rem; right: 1rem; width: 54px; height: 54px; font-size: 1.2rem; }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-eyebrow {
-                font-size: 0.75rem;
-            }
-
-            .profile-panel {
-                width: calc(100vw - 2rem);
-                right: -0.5rem;
-            }
-
-            .user-pill-name {
-                max-width: 80px;
-            }
-
-            .metric-val {
-                font-size: 1.6rem;
-            }
-
-            .data-table {
-                font-size: 0.8rem;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 0.7rem 0.6rem;
-            }
-
-            .stocky-panel {
-                width: calc(100vw - 1rem);
-                right: 0.5rem;
-            }
+            .container { padding: 0 1rem; }
+            .hero-title { font-size: 2rem !important; }
+            .hero-eyebrow { font-size: 0.75rem; }
+            
+            .metrics-grid { grid-template-columns: 1fr; }
+            
+            .profile-panel { width: calc(100vw - 2rem); right: -0.5rem; }
+            .user-pill-name { max-width: 70px !important; }
+            
+            .data-table { font-size: 0.8rem; }
+            .data-table th, .data-table td { padding: 0.7rem 0.6rem; }
+            
+            .stocky-panel { width: calc(100vw - 1rem); right: 0.5rem; }
         }
     </style>
 </head>
@@ -3231,7 +3212,7 @@
         </div>
     </div>
 
-    <nav class="nav" id="mainNav">
+   <nav class="nav" id="mainNav">
         <div class="nav-inner">
             <a href="#" class="nav-brand" onclick="goHome()">
                 <div class="nav-brand-icon"><i class="fas fa-store-alt"></i></div>
@@ -3244,12 +3225,19 @@
                         data-s="dashboard">Dashboard</a></li>
                 <li id="navInvLink" class="hidden"><a href="#" onclick="showSection('inventory')"
                         data-s="inventory">Inventory</a></li>
-                        <li id="navWalletLink" class="hidden"><a href="#" onclick="showSection('wallet')" data-s="wallet"><i class="fas fa-wallet" style="margin-right:0.3rem;"></i>Wallet</a></li>
+                <li id="navWalletLink" class="hidden"><a href="#" onclick="showSection('wallet')" data-s="wallet"><i
+                            class="fas fa-wallet" style="margin-right:0.3rem;"></i>Wallet</a></li>
                 <li id="navOrdersLink" class="hidden"><a href="#" onclick="showSection('orders')" data-s="orders">My
                         Orders</a></li>
             </ul>
             <div class="nav-right">
+
+                <button class="mobile-menu-btn" onclick="toggleMobileDrawer()">
+                    <i class="fas fa-bars"></i>
+                </button>
+
                 <button id="navLoginBtn" class="btn btn-forest btn-sm" onclick="showEntry()">Get Started</button>
+                
                 <div id="userPillWrap" class="hidden" style="position:relative;">
                     <div class="user-pill" onclick="toggleProfile()">
                         <div class="user-avatar" id="navAvatar">
@@ -3260,6 +3248,7 @@
                         <i class="fas fa-chevron-down"
                             style="font-size:0.7rem;color:var(--ink-40);margin-left:0.2rem;"></i>
                     </div>
+                    
                     <div class="profile-panel" id="profilePanel">
                         <div class="profile-panel-header">
                             <div class="profile-big-avatar" onclick="document.getElementById('avatarUpload').click()">
@@ -3289,9 +3278,28 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
         </div>
     </nav>
+
+    <div class="mobile-drawer glass-drawer" id="mobileDrawer">
+        <div class="drawer-header">
+            <span class="crimson-brand-text">StockLog</span>
+            <button class="drawer-close" onclick="toggleMobileDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="drawer-links" id="drawerLinks">
+            <li><a href="#" onclick="routeFromDrawer('home')" data-s="home">Home</a></li>
+            <li id="drawerBrowseLink"><a href="#" onclick="routeFromDrawer('browse')" data-s="browse">Browse Shops</a></li>
+            <li id="drawerDashLink" class="hidden"><a href="#" onclick="routeFromDrawer('dashboard')" data-s="dashboard">Dashboard</a></li>
+            <li id="drawerInvLink" class="hidden"><a href="#" onclick="routeFromDrawer('inventory')" data-s="inventory">Inventory</a></li>
+            <li id="drawerWalletLink" class="hidden"><a href="#" onclick="routeFromDrawer('wallet')" data-s="wallet">Wallet</a></li>
+            <li id="drawerOrdersLink" class="hidden"><a href="#" onclick="routeFromDrawer('orders')" data-s="orders">My Orders</a></li>
+        </ul>
+    </div>
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMobileDrawer()"></div>
 
     <main class="main" id="mainApp">
 
@@ -3995,31 +4003,69 @@
         </div>
     </div>
 
-    <button class="stocky-toggle" id="stockyToggle" onclick="toggleStocky()" title="Ask Stocky AI">
-        🤖
-        <div class="stocky-notif" id="stockyNotif"></div>
+    <!-- Voice Assistant FAB -->
+    <button class="voice-fab" id="voiceFab" onclick="toggleVoiceAssistant()" title="AI Voice Assistant">
+        <i class="fas fa-microphone"></i>
+        <div class="voice-badge" id="voiceBadge">0</div>
     </button>
 
-    <div class="stocky-panel" id="stockyPanel">
-        <div class="stocky-head">
-            <div class="stocky-avatar">🤖</div>
-            <div class="stocky-head-info">
-                <div class="name">Stocky AI</div>
-                <div class="status">Online · StockLog Assistant</div>
+    <!-- Voice Assistant Panel -->
+    <div class="voice-panel" id="voicePanel">
+        <div class="vp-header">
+            <div>
+                <div class="vp-title"><i class="fas fa-robot"></i> AI Inventory Assistant</div>
+                <div class="vp-status" id="vpStatus">Ready to listen</div>
             </div>
-            <button class="stocky-close" onclick="toggleStocky()"><i class="fas fa-times"></i></button>
+            <div style="display:flex; align-items:center; gap: 0.8rem;">
+                <div class="vp-lang-toggle">
+                    <button class="vp-lang-btn active" onclick="setVoiceLang('en-IN')" id="langEn">EN</button>
+                    <button class="vp-lang-btn" onclick="setVoiceLang('hi-IN')" id="langHi">हिं</button>
+                    <button class="vp-lang-btn" onclick="setVoiceLang('bn-IN')" id="langBn">বাং</button>
+                </div>
+                <button class="vp-close" onclick="toggleVoiceAssistant()"><i class="fas fa-times"></i></button>
+            </div>
         </div>
-        <div class="stocky-messages" id="stockyMessages"></div>
-        <div class="stocky-quick-btns" id="stockyQuickBtns">
-            <button class="quick-btn" onclick="sendQuick('How do I add a product to my shop?')">Add product</button>
-            <button class="quick-btn" onclick="sendQuick('How do I browse nearby shops?')">Find shops</button>
-            <button class="quick-btn" onclick="sendQuick('What are the platform fees?')">Platform fees</button>
-            <button class="quick-btn" onclick="sendQuick('How does AI stock alert work?')">Stock alerts</button>
+
+        <div class="vp-visualizer" id="vpVisualizer">
+            <div class="vp-bar"></div>
+            <div class="vp-bar"></div>
+            <div class="vp-bar"></div>
+            <div class="vp-bar"></div>
+            <div class="vp-bar"></div>
         </div>
-        <div class="stocky-input-row">
-            <input type="text" id="stockyInput" class="stocky-input" placeholder="Ask Stocky anything about StockLog..."
-                onkeydown="handleStockyKey(event)">
-            <button class="stocky-send" onclick="sendStocky()"><i class="fas fa-paper-plane"></i></button>
+
+        <div class="vp-transcript empty" id="vpTranscript">
+            Tap the microphone and start speaking...
+            <br>
+            <span style="font-size:0.85rem; opacity:0.7; margin-top:0.4rem; display:block;">"Add 5 kg rice and 2 packets of salt"</span>
+        </div>
+
+        <div id="vpBulkBadge" class="vp-bulk-badge" style="display:none;">
+            <i class="fas fa-layer-group"></i> Bulk Import Mode Active
+        </div>
+
+        <div class="vp-parsed-list" id="vpParsedItems">
+            <!-- Items injected here by JS -->
+        </div>
+
+        <div class="vp-actions">
+            <button class="btn btn-outline" style="flex:1;" onclick="restartVoiceSession()"><i class="fas fa-redo"></i> Re-record</button>
+            <button class="btn btn-forest" style="flex:2;" id="vpConfirmBtn" onclick="confirmVoiceItems()" disabled>Confirm & Add</button>
+        </div>
+    </div>
+
+    <!-- Voice Confirmation Modal -->
+    <div class="modal-overlay hidden" id="voiceConfirmModal">
+        <div class="modal" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <div style="width:60px; height:60px; border-radius:50%; background:var(--green-pale); color:var(--forest); display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 1rem;">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <h3 style="margin-bottom: 0.5rem;" id="vcTitle">Confirm Inventory Update</h3>
+            <p style="color:var(--ink-70); margin-bottom: 1.5rem; font-size:0.95rem;" id="vcDesc">Are you sure you want to add these items to your stock?</p>
+            <div style="display:flex; gap:0.8rem;">
+                <button class="btn btn-outline w-full" onclick="closeVoiceConfirmModal()">No, cancel</button>
+                <button class="btn btn-forest w-full" onclick="executeVoiceAdd()">Yes, add items</button>
+            </div>
         </div>
     </div>
     <div class="toast-container" id="toastContainer"></div>
@@ -4294,11 +4340,14 @@
         document.getElementById('dashOwnerName').textContent = `Owner: ${u.name} · Verified ✓`;
         document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         updateWalletUI(); 
+        
+        // SHOW VOICE FAB ONLY FOR OWNERS
+        document.getElementById('voiceFab').classList.add('show');
     } else {
         document.getElementById('navOrdersLink').classList.remove('hidden');
+        document.getElementById('voiceFab').classList.remove('show');
     }
 }
-
 function logout() {
     currentUser = null; 
     userLocation = null;
@@ -4317,6 +4366,9 @@ function logout() {
         const el = document.getElementById(id);
         if(el) el.classList.add('hidden');
     });
+    
+    // HIDE VOICE FAB ON LOGOUT
+    document.getElementById('voiceFab').classList.remove('show');
     
     document.getElementById('profilePanel').classList.remove('open');
     
@@ -4385,6 +4437,23 @@ function logout() {
 
         function goHome() { showSection('home'); }
         function toggleProfile() { document.getElementById('profilePanel').classList.toggle('open'); }
+
+        // PASTE THE MOBILE DRAWER CODE HERE:
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function routeFromDrawer(route) {
+            toggleMobileDrawer();
+            showSection(route);
+        }
+        // END OF MOBILE DRAWER CODE
+
+        // ── HOME SEARCH ──
+        function handleHomeSearch(e) { if (e.key === 'Enter') triggerHomeSearch(); }
 
         // ── HOME SEARCH ──
         function handleHomeSearch(e) { if (e.key === 'Enter') triggerHomeSearch(); }
@@ -4948,6 +5017,269 @@ function logout() {
 window.addEventListener('beforeunload', () => {
     sessionStorage.setItem('stocklog_scroll_y', window.scrollY);
 });
+
+        // ++++++++++++++++ AI VOICE ASSISTANT ++++++++++++++++
+        const GROCERY_DICT = [
+            { en: 'rice', hi: 'चावल', bn: 'চাল', unit: 'kg', cat: 'Grains', aliases: ['basmati', 'chawal'] },
+            { en: 'dal', hi: 'दाल', bn: 'ডাল', unit: 'kg', cat: 'Pulses', aliases: ['lentil', 'masoor', 'moong'] },
+            { en: 'salt', hi: 'नमक', bn: 'লবণ', unit: 'kg', cat: 'Spices', aliases: ['namak', 'lobon'] },
+            { en: 'sugar', hi: 'चीनी', bn: 'চিনি', unit: 'kg', cat: 'Grains', aliases: ['cheeni'] },
+            { en: 'oil', hi: 'तेल', bn: 'তেল', unit: 'L', cat: 'Oils', aliases: ['tel', 'cooking oil', 'mustard oil'] },
+            { en: 'atta', hi: 'आटा', bn: 'আটা', unit: 'kg', cat: 'Grains', aliases: ['flour', 'wheat'] },
+            { en: 'milk', hi: 'दूध', bn: 'দুধ', unit: 'L', cat: 'Dairy', aliases: ['doodh'] },
+            { en: 'butter', hi: 'मक्खन', bn: 'মাখন', unit: 'pack', cat: 'Dairy', aliases: ['makhan', 'amul'] },
+            { en: 'tea', hi: 'चाय', bn: 'চা', unit: 'kg', cat: 'Beverages', aliases: ['chai', 'patti'] },
+            { en: 'biscuit', hi: 'बिस्कुट', bn: 'বিস্কুট', unit: 'pack', cat: 'Snacks', aliases: ['biscuits', 'cookies'] },
+            { en: 'soap', hi: 'साबुन', bn: 'সাবান', unit: 'piece', cat: 'Personal Care', aliases: ['sabun'] },
+            { en: 'detergent', hi: 'सर्फ', bn: 'ডিটারজেন্ট', unit: 'kg', cat: 'Household', aliases: ['surf', 'washing powder'] }
+        ];
+
+        let vaPanel = document.getElementById('voicePanel');
+        let vaFab = document.getElementById('voiceFab');
+        let vpStatus = document.getElementById('vpStatus');
+        let vpTranscript = document.getElementById('vpTranscript');
+        let vpItems = document.getElementById('vpParsedItems');
+        let vpConfirmBtn = document.getElementById('vpConfirmBtn');
+        let vpVisualizer = document.getElementById('vpVisualizer');
+        
+        let recognition = null;
+        let isListening = false;
+        let voiceLang = 'en-IN';
+        let parsedVoiceItems = [];
+
+        function toggleVoiceAssistant() {
+            if (!vaPanel.classList.contains('open')) {
+                vaPanel.classList.add('open');
+                startVoiceSession();
+            } else {
+                vaPanel.classList.remove('open');
+                stopVoiceSession();
+            }
+        }
+
+        function setVoiceLang(langCode) {
+            voiceLang = langCode;
+            document.querySelectorAll('.vp-lang-btn').forEach(b => b.classList.remove('active'));
+            if(langCode === 'en-IN') document.getElementById('langEn').classList.add('active');
+            if(langCode === 'hi-IN') document.getElementById('langHi').classList.add('active');
+            if(langCode === 'bn-IN') document.getElementById('langBn').classList.add('active');
+            if(isListening) {
+                stopVoiceSession();
+                setTimeout(startVoiceSession, 300);
+            }
+        }
+
+        function startVoiceSession() {
+            if (!('webkitSpeechRecognition' in window)) {
+                vpTranscript.innerHTML = "❌ Speech recognition not supported in this browser. Please use Chrome.";
+                vpTranscript.classList.remove('empty');
+                return;
+            }
+            
+            parsedVoiceItems = [];
+            renderParsedItems();
+            vpConfirmBtn.disabled = true;
+            document.getElementById('vpBulkBadge').style.display = 'none';
+
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = voiceLang;
+
+            recognition.onstart = function() {
+                isListening = true;
+                vaFab.classList.add('listening');
+                vpStatus.className = 'vp-status listening';
+                vpStatus.innerHTML = '<i class="fas fa-microphone"></i> Listening...';
+                vpTranscript.innerHTML = "Speak now...";
+                vpTranscript.classList.remove('empty');
+                document.querySelectorAll('.vp-bar').forEach(b => b.classList.add('active'));
+            };
+
+            recognition.onresult = function(event) {
+                let interim = '';
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) final += event.results[i][0].transcript;
+                    else interim += event.results[i][0].transcript;
+                }
+                if (interim) vpTranscript.innerHTML = `<i>${interim}</i>`;
+                if (final) {
+                    vpTranscript.innerHTML = final;
+                    processVoiceInput(final);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech error", event);
+                vpStatus.innerHTML = 'Error: ' + event.error;
+                stopVoiceSession();
+            };
+
+            recognition.onend = function() {
+                isListening = false;
+                vaFab.classList.remove('listening');
+                vpStatus.className = 'vp-status';
+                vpStatus.innerHTML = 'Idle';
+                document.querySelectorAll('.vp-bar').forEach(b => b.classList.remove('active'));
+            };
+
+            recognition.start();
+        }
+
+        function stopVoiceSession() {
+            if (recognition) recognition.stop();
+        }
+
+        function restartVoiceSession() {
+            stopVoiceSession();
+            setTimeout(startVoiceSession, 300);
+        }
+
+        function processVoiceInput(text) {
+            vpStatus.className = 'vp-status processing';
+            vpStatus.innerHTML = '<i class="fas fa-cog fa-spin"></i> Parsing...';
+            
+            const lowerText = text.toLowerCase();
+            const words = lowerText.split(/[\s,]+/);
+            
+            let tempItems = [];
+            let currentQty = 1;
+            
+            // Simple parsing: Look for numbers then find the nearest grocery item
+            const numberMap = {'one':1, 'two':2, 'three':3, 'four':4, 'five':5, 'six':6, 'seven':7, 'eight':8, 'nine':9, 'ten':10,
+                               'एक':1, 'दो':2, 'तीन':3, 'चार':4, 'पांच':5, 'छह':6, 'सात':7, 'आठ':8, 'नौ':9, 'दस':10,
+                               'এক':1, 'দুই':2, 'তিন':3, 'চার':4, 'পাঁচ':5, 'ছয়':6, 'সাত':7, 'আট':8, 'নয়':9, 'দশ':10};
+            
+            for (let i = 0; i < words.length; i++) {
+                let w = words[i];
+                if (!isNaN(w)) { currentQty = parseFloat(w); continue; }
+                if (numberMap[w]) { currentQty = numberMap[w]; continue; }
+                
+                // Check if word matches dictionary
+                for (const item of GROCERY_DICT) {
+                    if (w === item.en || w === item.hi || w === item.bn || item.aliases.includes(w)) {
+                        // Found item!
+                        tempItems.push({
+                            name: item.en.charAt(0).toUpperCase() + item.en.slice(1),
+                            qty: currentQty,
+                            unit: item.unit,
+                            cat: item.cat,
+                            price: 0 // Default to 0, user must edit later or add logic
+                        });
+                        currentQty = 1; // Reset qty
+                        break;
+                    }
+                }
+            }
+            
+            // Fallback if no specific numbers mentioned but multiple items listed
+            if(tempItems.length === 0 && text.length > 3) {
+                // Try naive approach for testing
+                GROCERY_DICT.forEach(item => {
+                    if(lowerText.includes(item.en) || lowerText.includes(item.hi) || lowerText.includes(item.bn)) {
+                        tempItems.push({
+                            name: item.en.charAt(0).toUpperCase() + item.en.slice(1),
+                            qty: 1, unit: item.unit, cat: item.cat, price: 0
+                        });
+                    }
+                });
+            }
+
+            // Remove duplicates
+            const unique = [];
+            tempItems.forEach(t => {
+                if(!unique.find(u => u.name === t.name)) unique.push(t);
+            });
+            parsedVoiceItems = unique;
+
+            renderParsedItems();
+            
+            vpStatus.className = 'vp-status';
+            vpStatus.innerHTML = `Found ${parsedVoiceItems.length} items`;
+            
+            if (parsedVoiceItems.length > 0) {
+                vpConfirmBtn.disabled = false;
+                if (parsedVoiceItems.length >= 5) {
+                    document.getElementById('vpBulkBadge').style.display = 'flex';
+                }
+                speakOut(`I have noted ${parsedVoiceItems.length} items. Should I proceed?`);
+            } else {
+                vpConfirmBtn.disabled = true;
+                speakOut("I couldn't understand the items. Please try again.");
+            }
+        }
+
+        function renderParsedItems() {
+            vpItems.innerHTML = parsedVoiceItems.map((item, index) => `
+                <div class="vp-item">
+                    <div>
+                        <div class="vp-item-name">${item.name} <span style="font-size:0.7rem; color:var(--ink-40)">(${item.cat})</span></div>
+                        <div class="vp-item-qty" style="display:inline-block; margin-top:0.3rem;">${item.qty} ${item.unit}</div>
+                    </div>
+                    <button class="vp-item-del" onclick="removeVoiceItem(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+            
+            const badge = document.getElementById('voiceBadge');
+            badge.textContent = parsedVoiceItems.length;
+            if(parsedVoiceItems.length > 0) badge.classList.add('show');
+            else badge.classList.remove('show');
+        }
+
+        function removeVoiceItem(index) {
+            parsedVoiceItems.splice(index, 1);
+            renderParsedItems();
+            if(parsedVoiceItems.length === 0) vpConfirmBtn.disabled = true;
+            if(parsedVoiceItems.length < 5) document.getElementById('vpBulkBadge').style.display = 'none';
+        }
+
+        function speakOut(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                if(voiceLang.startsWith('hi')) utterance.lang = 'hi-IN';
+                else if(voiceLang.startsWith('bn')) utterance.lang = 'hi-IN'; // Fallback as BN TTS often missing
+                else utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function confirmVoiceItems() {
+            document.getElementById('vcDesc').innerHTML = `Are you sure you want to add <b>${parsedVoiceItems.length}</b> items to your inventory?`;
+            document.getElementById('voiceConfirmModal').classList.remove('hidden');
+        }
+
+        function closeVoiceConfirmModal() {
+            document.getElementById('voiceConfirmModal').classList.add('hidden');
+        }
+
+        function executeVoiceAdd() {
+            closeVoiceConfirmModal();
+            const isBulk = parsedVoiceItems.length >= 5;
+            
+            parsedVoiceItems.forEach(item => {
+                inventoryData.push({
+                    id: Date.now() + Math.random(),
+                    name: item.name + ' (Voice Added)',
+                    cat: item.cat,
+                    price: 0,
+                    stock: item.qty,
+                    unit: item.unit,
+                    threshold: 10,
+                    img: ''
+                });
+            });
+            
+            renderInventoryTable();
+            if(typeof updateHeroStats === 'function') updateHeroStats();
+            toggleVoiceAssistant();
+            
+            if(isBulk) {
+                toast(`📦 Bulk Import Action Triggered! ${parsedVoiceItems.length} items processed.`);
+            } else {
+                toast(`✅ Manual Add Action Triggered! ${parsedVoiceItems.length} items added.`);
+            }
+        }
 
         // ── INIT ──
 document.addEventListener('DOMContentLoaded', () => {
